@@ -1,4 +1,4 @@
-# 🍕 Pizza Ordering Web App
+# 🍕 Restaurant Ordering Web App
 
 Ứng dụng web đặt món cho nhà hàng chuyên các món:
 - Pizza
