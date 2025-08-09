@@ -1,0 +1,93 @@
+﻿@model WebsiteOrdering.ViewModels.RegisterViewModel
+@{
+    <link rel="stylesheet" href="~/css/dangky.css" />
+    Layout = null;
+    ViewBag.HidenHeaderFotter = true;
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2&display=swap" rel="stylesheet">
+
+}
+@if (ViewBag.EmailConfirmationMessage != null)
+{
+    <div class="alert alert-success">
+        @ViewBag.EmailConfirmationMessage
+    </div>
+}
+@Html.ValidationSummary(true, "", new { @class = "text-danger" })
+<html>
+<body>
+
+    <div class="total_dangky">
+
+        <div class="form_dangky">
+            @* <div class="div_back_home">
+                <a href="/Home" class="back-home">
+                    <svg viewBox="0 0 512 512" width="40" height="40" fill="none">
+                        <path d="M256 64L192 128L256 192" stroke="currentColor" stroke-width="40" stroke-linecap="round" stroke-linejoin="round" />
+                        <path d="M192 128H352C405.019 128 448 170.981 448 224C448 277.019 405.019 320 352 320H160" stroke="currentColor" stroke-width="40" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                </a>
+
+                <h2 style="color: #203F25;">TẠO TÀI KHOẢN</h2>*@
+            <h2 style="color: #203F25;">TẠO TÀI KHOẢN</h2>
+
+            <form asp-action="Register" method="post">
+
+                <div id="dk_tendn">
+                    <span>
+                        <img style="width:30px;height:23px" src="~/css/img/icon_user.png" alt="Email icon" />
+                    </span>
+                    <input asp-for="FullName" type="text" placeholder="Nhập tên đăng nhập" />
+                    <span asp-validation-for="FullName"></span>
+                </div>
+
+                <div id="dk_email">
+                    <span>
+                        <img style="width:30px;height:23px" src="~/css/img/icon_email.png" alt="Email icon" />
+                    </span>
+                    <input asp-for="Email" type="email" placeholder="Nhập email" />
+                    <span asp-validation-for="Email"></span>
+                </div>
+
+                <div id="dk_mk">
+                    <span>
+                        <img style="width:25px; height:27px" src="~/css/img/icon_pass.png" alt="Password icon" />
+                    </span>
+                    <input asp-for="Password" type="password" placeholder="Nhập mật khẩu" />
+                    <span asp-validation-for="Password"></span>
+                </div>
+
+                <div id="dk_cfmk">
+                    <span>
+                        <img style="width:25px; height:27px" src="~/css/img/icon_pass.png" alt="Password icon" />
+                    </span>
+                    <input asp-for="ConfirmPassword" type="password" placeholder="Nhập lại mật khẩu" />
+                    <span asp-validation-for="ConfirmPassword"></span>
+                </div>
+
+                <div class="remmember_login">
+                    <label class="checkbox_login">
+                        <input type="checkbox" />
+                        Tôi đồng ý với các <a style="color:#203F25; margin-left:5px; margin-right:5px">Chính sách</a> và <a style="color:#203F25; margin-left:5px">Điều kiện</a>
+                    </label>
+                </div>
+
+                <button type="submit" class="btn_dangky">ĐĂNG KÝ</button>
+
+                <div class="dn_login">
+                    Đã có tài khoản?
+                    <a asp-controller="Account" asp-action="Login" class="register_link">Đăng nhập</a>
+                </div>
+
+            </form>
+        </div>
+
+        <div class="anh_login">
+            <img src="~/css/img/Dangky.jpg" alt="Background Image" />
+        </div>
+    </div>
+
+</body>
+</html>
+
+
+<partial name="_ValidationScriptsPartial" />

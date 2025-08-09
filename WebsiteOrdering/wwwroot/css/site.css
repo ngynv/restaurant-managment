@@ -1,0 +1,87 @@
+:root {
+    --green-color: #203F25;
+    --yellow-color: #E0B37F;
+    --beige-color: #EEDFAD;
+    --dark-green: #152B18;
+}
+
+html {
+    font-size: 14px;
+}
+
+@font-face {
+    font-family: "Cakelan";
+    src: url(/fonts/1FTV-CAKELAN.OTF) format('opentype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "SVN";
+    src: url('/fonts/SVN-Jane Austen.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "Mestika";
+    src: url(/fonts/1FTV-VIP-MESTIKA.OTF) format('opentype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@media (min-width: 768px) {
+    html {
+        font-size: 16px;
+    }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+    position: relative;
+    min-height: 100%;
+}
+
+body {
+    background: #203F25;
+    margin-bottom: 20px;
+}
+
+.layout-guide {
+    display: grid;
+    grid-template-columns: repeat(14, 1fr); /* ho?c 12 n?u b?n theo Bootstrap */
+    column-gap: 24px; /* gutter gi?ng Figma */
+    max-width: 1334px; /* gi?ng Figma n?u d?ng 14 c?t * 73 + 13 * 24 */
+    margin-inline: auto;
+    padding-inline: 16px; /* cho an to?n v?i mobile */
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    overflow: visible;
+}
+
+    .layout-guide > * {
+        /*    background-color: rgba(204, 204, 204, 0.1);  gi?ng m?u l??i trong Figma */
+        min-height: 40px;
+    }
+/* N?t switch Grid */
+/*#toggleGridBtn{
+    position:fixed;
+    bottom:16px;
+    right:16px;
+    z-index:9999;
+    background-color: var(--green-color);
+    color:white;
+    border:none;
+    padding: 8px 12px;
+    border-radius:8px;
+    font-size:14px;
+    cursor:pointer;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+#toggleGridBtn:hover{
+    background-color:var(--yellow-color);
+}*/

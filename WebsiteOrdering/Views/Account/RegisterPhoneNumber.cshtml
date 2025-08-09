@@ -1,0 +1,17 @@
+﻿
+@{
+    ViewData["Title"] = "Đăng ký số điện thoại";
+}
+
+<h2>Đăng ký bằng số điện thoại</h2>
+
+<form asp-action="SendOtp" method="post">
+    <input type="text" name="phone" placeholder="Nhập số điện thoại" />
+    <button type="submit">Gửi mã OTP</button>
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

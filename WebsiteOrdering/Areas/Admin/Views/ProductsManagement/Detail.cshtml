@@ -1,0 +1,72 @@
+﻿@using WebsiteOrdering.Areas.ViewModelAdmin
+@model MonanDetailViewModel
+@{
+    ViewData["Title"] = "Chi tiết sản phẩm";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+<div class="content-title">
+    <h2>Chi tiết sản phẩm</h2>
+</div>
+<div class="detail-product">
+    <div class="infor-product">
+        <h5 class="product-title">Thông tin sản phẩm</h5>
+        <table class="table table-bordered table-order">
+            <tr>
+                <td><strong>Mã sản phẩm:</strong></td>
+                <td>@Model.Idmonan</td>
+            </tr>
+            <tr>
+                <td><strong>Tên món:</strong></td>
+                <td>@Model.Tenmonan</td>
+            </tr>
+            <tr>
+                <td><strong>Loại món:</strong></td>
+                <td>@Model.Tenloaimonan</td>
+            </tr>
+            <tr>
+                <td><strong>Giá:</strong></td>
+                <td>@Model.Giamonan.ToString("N0") đ</td>
+            </tr>
+            <tr>
+                <td><strong>Trạng thái:</strong></td>
+                <td>
+                    @if (Model.Trangthaiman == "Còn hàng")
+                    {
+                        <span>@Model.Trangthaiman</span>
+                    }
+                    else
+                    {
+                        <span>@Model.Trangthaiman</span>
+                    }
+                </td>
+            </tr>
+            @if (!string.IsNullOrEmpty(Model.Mota))
+            {
+                <tr>
+                    <td><strong>Mô tả:</strong></td>
+                    <td>@Model.Mota</td>
+                </tr>
+            }
+        </table>
+    </div>
+    <div class="img-product">
+        <h5 class="product-title">Hình ảnh sản phẩm</h5>
+        @if (!string.IsNullOrEmpty(Model.Anhmonan))
+        {
+            <img src="~/css/img/@Model.Anhmonan"
+                 alt="@Model.Tenmonan"
+                 class="img-thumbnail" />
+        }
+        else
+        {
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle"></i> Chưa có hình ảnh
+            </div>
+        }
+    </div>
+</div>
+<div class="mt-3">
+    <a asp-action="Index" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> Quay lại
+    </a>
+</div>

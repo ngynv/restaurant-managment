@@ -1,0 +1,44 @@
+﻿@model List<WebsiteOrdering.Models.Donhang>
+@{
+    ViewData["Title"] = "Đơn hàng";
+}
+<h2 class="personal-orders-title">LỊCH SỬ ĐẶT HÀNG</h2>
+
+@if (!User.Identity.IsAuthenticated)
+{
+    <p class="personal-orders-message">Vui lòng <a asp-controller="Account" asp-action="Login">đăng nhập</a> để xem đơn hàng.</p>
+}
+else if (Model == null || !Model.Any())
+{
+    <p class="personal-orders-message">Bạn chưa có đơn hàng nào.</p>
+}
+else
+{
+    <div class="personal-orders-wrapper">
+        <div class="personal-orders-scroll">
+            <table class="personal-orders-table">
+                <thead>
+                    <tr>
+                        <th>Ngày đặt</th>
+                        <th>Tổng tiền</th>
+                        <th>Trạng thái</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var order in Model)
+                    {
+                        <tr>
+                            <td>@order.Ngaydat.ToString("dd/MM/yyyy")</td>
+                            <td>@order.Tongtien.ToString("N0") VNĐ</td>
+                            <td><span>@order.Trangthai.ToFriendly()</span></td>
+                            <td>
+                                <a class="personal-orders-detail-link" asp-controller="Order" asp-action="Details" asp-route-id="@order.Iddonhang">[Chi tiết]</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}

@@ -1,0 +1,241 @@
+﻿.hoa-don-container-tong {
+    background-color: white;
+    margin-left: calc(-50vw + 50%);
+    width: 100vw;
+}
+
+.hoa-don-background{
+    background-color: white;
+    margin: 0 115px;
+}
+
+.hoa-don-tieude {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid #aaa;
+    font-family: 'Cakelan', serif;
+    /*    padding: 20px 0;*/
+}
+
+.hoa-don-hoadon {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 10px;
+    flex: 1;
+}
+
+    .hoa-don-hoadon p {
+        margin: 0;
+        font-size: 20px;
+        color: #203F25;
+        letter-spacing: 1.5px;
+        line-height: 30px;
+        font-family: '1FTV VIP Mestika', serif;
+        letter-spacing: 1.5px;
+    }
+
+.hoa-don-anh {
+    /* padding-left: 40px;
+      text-align: right;
+    padding: 10px 20px;*/
+}
+
+    .hoa-don-anh img {
+        width: 250px;
+        height: 210px;
+        object-fit: contain;
+    }
+
+.hoa-don-header {
+    height: 65px;
+    display: flex;
+    align-items: center;
+    background-color: #EEDFAD;
+    width: 53%;
+    position: relative;
+    left: -11%;
+    padding: 0 0 0 20px;
+    box-sizing: border-box;
+    gap: 30px;
+}
+.hoa-don-lines {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    height: 100%;
+    gap: 25px;
+}
+
+    .hoa-don-lines .line {
+        background-color: white;
+    }
+
+.line.thick {
+    width: 5px;
+    height: 100%;
+}
+
+.line.thin {
+    width: 5px;
+    height: 100%;
+}
+
+.hoa-don-title h2 {
+    font-size: 32px;
+    font-weight: bold;
+    letter-spacing: 3px;
+    margin: 0 0 0 95px;
+    color: #203F25;
+    font-family: 'Cakelan', serif;
+}
+
+/*============================================================*/
+
+.hoa-don-noidung {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-top: 35px;
+    gap: 310px;
+}
+
+.hoa-don-infor {
+    flex: 1;
+    text-align: left;
+}
+
+    .hoa-don-infor h2,
+    .hoa-don-address h2 {
+        font-size: 24px;
+        font-weight: bold;
+        color: #203F25;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        margin-bottom: 10px;
+        font-family: 'Cakelan', serif;
+    }
+
+    .hoa-don-infor p,
+    .hoa-don-address p {
+        font-size: 20px;
+        color: #203F25;
+        margin: 5px 0;
+        line-height: 1.7;
+        font-family: '1FTV VIP Mestika', serif;
+        letter-spacing: 1.5px;
+    }
+
+.hoa-don-address {
+    flex: 1;
+    text-align: right;
+}
+/*===============================*/
+
+.table-hoa-don {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: '1FTV VIP Mestika', serif;
+    margin-top: 35px;
+    letter-spacing: 1.5px;
+    table-layout: fixed;
+}
+
+    .table-hoa-don thead {
+        background-color: #203F25; 
+    }
+
+        .table-hoa-don thead th {
+            color: #E0B37F;
+            font-size: 22px;
+            padding: 12px 8px;
+            letter-spacing: 1px;
+            text-align: center;
+            font-weight: 500;
+        }
+
+    .table-hoa-don tbody td {
+        padding: 12px 8px;
+        border-bottom: 1px solid #999;
+        font-size: 20px;
+        color: #203F25;
+    }
+
+        .table-hoa-don tbody td:first-child {
+            text-align: left;
+            word-break: break-word;
+        }
+
+        .table-hoa-don tbody td:nth-child(2),
+        .table-hoa-don tbody td:nth-child(3),
+        .table-hoa-don tbody td:nth-child(4) {
+            text-align: center;
+            white-space: nowrap;
+        }
+    .table-hoa-don td span {
+        font-size: 15px;
+        color: #203F25;
+        font-weight: normal;
+    }
+    .table-hoa-don td strong {
+        font-size: 18px;
+        font-weight:600 !important;
+    }
+    .table-hoa-don thead th:nth-child(1),
+    .table-hoa-don tbody td:nth-child(1) {
+        width: 40%; 
+    }
+
+    .table-hoa-don thead th:nth-child(2),
+    .table-hoa-don tbody td:nth-child(2) {
+        width: 20%;
+    }
+
+    .table-hoa-don thead th:nth-child(3),
+    .table-hoa-don tbody td:nth-child(3) {
+        width: 20%; 
+    }
+
+    .table-hoa-don thead th:nth-child(4),
+    .table-hoa-don tbody td:nth-child(4) {
+        width: 20%; 
+    }
+/*====================================================*/
+
+.hoa-don-tongcong {
+    width: 100%;
+    margin-top: 35px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    font-family: '1FTV VIP Mestika', serif;
+    font-size: 18px;
+    letter-spacing: 1.2px;
+    color: #203F25;
+}
+
+.tongcong-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 0 0 0 60%;
+}
+
+.ten-tieude {
+    font-family: 'Cakelan', serif;
+    flex: 1;
+    text-align: left;
+    font-weight: 500;
+}
+
+.in-ra {
+    width: fit-content;
+    text-align: right;
+    font-family: '1FTV VIP Mestika', serif;
+}
+
+    .tongcong-row strong {
+        font-size: 22px;
+    }

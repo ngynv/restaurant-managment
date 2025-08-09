@@ -1,0 +1,82 @@
+﻿@using WebsiteOrdering.Enums
+@model WebsiteOrdering.Models.Donhang
+
+@{
+	ViewData["Title"] = "Chi tiết đơn hàng";
+}
+
+<link href="~/css/style.css" rel="stylesheet" />
+
+<div class="detail-order-wrapper">
+	<h2 class="detail-order-title">CHI TIẾT ĐƠN HÀNG</h2>
+	<p class="detail-order-id">Mã đơn hàng: @Model.Iddonhang</p>
+	<p class="detail-order-date">Ngày đặt: @Model.Ngaydat.ToString("dd/MM/yyyy")</p>
+	<p class="detail-order-status">
+		Trạng thái:
+		<span>@Model.Trangthai.ToFriendly()</span>
+	</p>
+
+	@if (Model.Trangthai == TrangThai.Pending || Model.Trangthai == TrangThai.Paid || Model.Trangthai == TrangThai.Preparing)
+	{
+		<form asp-action="Cancel" method="post" onsubmit="return confirm('Bạn có chắc muốn hủy đơn hàng này không?');">
+			<input type="hidden" name="id" value="@Model.Iddonhang" />
+			<button type="submit" class="detail-order-cancel-btn">Huỷ đơn hàng</button>
+		</form>
+	}
+
+	<table class="detail-order-table">
+		<thead>
+			<tr>
+				<th>Sản phẩm</th>
+				<th>Giá</th>
+				<th>Số lượng</th>
+				<th>Tổng</th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (var item in Model.Chitietdonhangs)
+			{
+				<tr>
+					<td>
+						<p class="detail-order-item-name">
+							@if (item.Idmonan2Navigation != null)
+							{
+								<span>Pizza 2 vị - @item.IdmonanNavigation.Tenmonan & @item.Idmonan2Navigation.Tenmonan</span>
+							}
+							else
+							{
+								@item.IdmonanNavigation.Tenmonan
+							}
+						</p>
+						<p>Size: @item.IdsizeNavigation?.Tensize</p>
+						<p>Đế: @item.IddebanhNavigation?.Tendebanh</p>
+						@if (!string.IsNullOrEmpty(item.Ghichu))
+						{
+							<p>Ghi chú: @item.Ghichu</p>
+						}
+						<p>
+							@if (item.Chitiettoppings != null && item.Chitiettoppings.Any())
+							{
+								<ul class="mb-0">
+									@foreach (var tp in item.Chitiettoppings)
+									{
+										<li>@tp.IdtoppingNavigation.Tentopping (@tp.IdtoppingNavigation.Giatopping VNĐ)</li>
+									}
+								</ul>
+							}
+						</p>
+					</td>
+					<td>@item.Tongtiendh.ToString("N0") VNĐ</td>
+					<td>@item.Soluong</td>
+					<td>@((item.Tongtiendh * item.Soluong).ToString("N0") + " VNĐ")</td>
+				</tr>
+			}
+		</tbody>
+		<tfoot>
+			<tr>
+				<td colspan="3" class="detail-order-total-label">TỔNG CỘNG</td>
+				<td class="detail-order-total-amount">@Model.Tongtien.ToString("N0") VNĐ</td>
+			</tr>
+		</tfoot>
+	</table>
+</div>

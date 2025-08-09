@@ -1,0 +1,91 @@
+﻿@model WebsiteOrdering.ViewModels.UpdateProfileViewModel
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div id="toast-success" class="toast-message show">
+        @TempData["SuccessMessage"]
+    </div>
+}
+
+
+<div class="personal-info-wrapper">
+    <h2 class="personal-info-title">THÔNG TIN TÀI KHOẢN</h2>
+
+    <form asp-action="UpdateInfo" asp-controller="Account" method="post" class="personal-info-form">
+        <div class="form-group personal-info-group">
+            <label asp-for="FullName" class="personal-info-label"></label>
+            <input asp-for="FullName" class="form-control personal-info-input" />
+            <span asp-validation-for="FullName" class="text-danger personal-info-error"></span>
+        </div>
+
+        <div class="form-group personal-info-group">
+            <label asp-for="Email" class="personal-info-label"></label>
+            <input asp-for="Email" class="form-control personal-info-input readonly" readonly />
+        </div>
+
+        <div class="form-group personal-info-group">
+            <label asp-for="PhoneNumber" class="personal-info-label"></label>
+            <input asp-for="PhoneNumber" class="form-control personal-info-input" />
+            <span asp-validation-for="PhoneNumber" class="text-danger personal-info-error"></span>
+        </div>
+
+        <div class="personal-info-form-row">
+            <div class="form-group personal-info-group">
+                <label asp-for="BirthDate" class="personal-info-label"></label>
+                <input asp-for="BirthDate" type="date" class="form-control personal-info-input" />
+                <span asp-validation-for="BirthDate" class="text-danger personal-info-error"></span>
+            </div>
+
+            <div class="form-group personal-info-group">
+                <label asp-for="Gender" class="personal-info-label"></label>
+                <select asp-for="Gender" class="form-control personal-info-input">
+                    <option value="">-- Chọn giới tính --</option>
+                    <option value="Nam">Nam</option>
+                    <option value="Nữ">Nữ</option>
+                    <option value="Khác">Khác</option>
+                </select>
+                <span asp-validation-for="Gender" class="text-danger personal-info-error"></span>
+            </div>
+        </div>
+
+        <div class="personal-info-submit">
+            <button type="submit" class="btn personal-info-button">
+                <svg xmlns="http://www.w3.org/2000/svg" width="413" height="60" viewBox="0 0 413 60" fill="none">
+                    <path d="M396.873 0C396.873 5.52285 403.234 10 411.08 10C411.559 9.99999 412.033 9.98185 412.5 9.94922V50.0498C412.033 50.0172 411.559 50 411.08 50C403.234 50 396.873 54.4772 396.873 60H14.707C14.707 54.4772 8.34619 50 0.5 50V10C8.22373 9.99995 14.5079 5.66148 14.7021 0.257812L14.707 0H396.873Z" fill="#fff" stroke="#203F25" />
+                </svg>
+                <span class="personal-info-button-text">Lưu thay đổi</span>
+            </button>
+        </div>
+    </form>
+</div>
+
+<style>
+    .toast-message {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background-color: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+        padding: 12px 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        z-index: 9999;
+        opacity: 0;
+        transition: opacity 0.5s ease-in-out;
+        pointer-events: none;
+    }
+
+        .toast-message.show {
+            opacity: 1;
+        }
+</style>
+
+<script>
+    setTimeout(() => {
+        const toast = document.getElementById('toast-success');
+        if (toast) {
+            toast.classList.remove('show');
+        }
+    }, 3000); // 3 giây
+</script>

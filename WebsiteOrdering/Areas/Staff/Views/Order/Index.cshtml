@@ -1,0 +1,361 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@model WebsiteOrdering.Areas.Staff.ViewModels.OrderTaiChoViewModel
+
+@{
+    ViewData["Title"] = "Order tại chỗ";
+    var allCategories = Model.LoaiMonList;
+    var parentCategories = allCategories.Where(c => string.IsNullOrEmpty(c.IdloaimanCha)).ToList();
+}
+
+<style>
+    .box {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    .dropdown:hover > .dropdown-menu {
+        display: block;
+    }
+
+    .dropdown-submenu {
+        position: relative;
+    }
+
+        .dropdown-submenu > .dropdown-menu {
+            top: 0;
+            left: 100%;
+            margin-top: -1px;
+            display: none;
+        }
+
+        .dropdown-submenu:hover > .dropdown-menu {
+            display: block;
+        }
+</style>
+
+<div class="container my-4" style="display:flex; gap: 20px;">
+    <!-- Giỏ hàng -->
+    <div class="box" style="flex: 1;">
+        <h4>Giỏ hàng</h4>
+        @if (Model.OrderSession.ChiTietMonAn.Any())
+        {
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Món</th>
+                        <th>SL</th>
+                        <th>Giá</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.OrderSession.ChiTietMonAn)
+                    {
+                        <tr>
+                            <td>
+                                @item.TENSANPHAM
+                                @if (!string.IsNullOrEmpty(item.GhiChu))
+                                {
+                                    <small class="text-muted">(@item.GhiChu)</small>
+                                }
+                                <br />
+                                <span class="text-muted" style="font-size: 0.9em;">
+                                    @if (!string.IsNullOrEmpty(item.IDMMONAN2))
+                                    {
+                                        <input type="hidden" name="idMonGhep" value="@item.IDMMONAN2" />
+
+                                        <span>Pizza ghép: @item.TENSANPHAM2</span>
+
+                                        <br />
+                                    }
+                                    @if (!string.IsNullOrEmpty(item.Size))
+                                    {
+                                        <input type="hidden" name="idSize" value="@item.Size" />
+                                        <span>Size: @item.Size </span>
+
+                                        <br />
+                                    }
+                                    @if (!string.IsNullOrEmpty(item.DeBanh))
+                                    {
+                                        <span>Đế: @item.DeBanh</span>
+
+                                        <br />
+                                    }
+                                    @if (item.Topping != null && item.Topping.Any())
+                                    {
+                                        <span>Topping: @string.Join(", ", item.Topping.Select(t => t.Tentopping))</span>
+
+                                        <br />
+                                    }
+                                </span>
+                            </td>
+                            <td>@item.SoLuong</td>
+                            <td>@item.TongTien.ToString("N0") VND</td>
+                            <td>
+
+
+                                <form asp-action="PrepareUpdateMon" method="post">
+                                    <input type="hidden" name="idDatBan" value="@Model.OrderSession.IdDatBan" />
+                                    <input type="hidden" name="idMon" value="@item.IDMONAN" />
+                                    <input type="hidden" name="idPizzaGhep" value="@item.IDMMONAN2" />
+                                    <input type="hidden" name="idSize" value="@item.Size" />
+                                    <button type="submit" class="btn btn-info btn-sm">Chỉnh sửa</button>
+                                </form>
+
+                                <form asp-action="XoaMonTrongSession" method="post">
+                                    <input type="hidden" name="idDatBan" value="@Model.OrderSession.IdDatBan" />
+                                    <input type="hidden" name="idMon" value="@item.IDMONAN" />
+                                    <input type="hidden" name="idPizzaGhep" value="@item.IDMMONAN2" />
+                                    <input type="hidden" name="idSize" value="@item.Size" />
+                                    <button type="submit">Xóa</button>
+                                </form>
+
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <p><strong>Tổng: @Model.OrderSession.TongTien.ToString("N0") VND</strong></p>
+
+            <form asp-area="Staff" asp-controller="Order" asp-action="LuuDonTaiCho" method="post">
+                <input type="hidden" name="idDatBan" value="@Model.OrderSession.IdDatBan" />
+                <button type="submit" class="btn btn-primary mb-2">Lưu đơn tại chỗ</button>
+            </form>
+
+        }
+        else
+        {
+            <p>Chưa có món nào.</p>
+        }
+    </div>
+
+    <!-- Chọn món -->
+    <div class="box" style="flex: 2;">
+        <h4>Chọn món</h4>
+
+        <!-- Chọn loại -->
+        <form method="get" asp-action="Index" class="d-flex flex-wrap gap-2 mb-4">
+            @foreach (var parent in parentCategories)
+            {
+                var children = allCategories.Where(c => c.IdloaimanCha == parent.Idloaimonan).ToList();
+
+                if (children.Any())
+                {
+                    <div class="dropdown">
+                        <button type="button" class="btn btn-outline-primary">
+                            @parent.Tenloaimonan
+                        </button>
+                        <ul class="dropdown-menu">
+                            @foreach (var child in children)
+                            {
+                                var grandChildren = allCategories.Where(c => c.IdloaimanCha == child.Idloaimonan).ToList();
+
+                                if (grandChildren.Any())
+                                {
+                                    <li class="dropdown-submenu">
+                                        <button type="button" class="dropdown-item">@child.Tenloaimonan</button>
+                                        <ul class="dropdown-menu">
+                                            @foreach (var grandChild in grandChildren)
+                                            {
+                                                <li>
+                                                    <button type="submit" name="idLoai" value="@grandChild.Idloaimonan" class="dropdown-item" asp-route-idDatBan="@Model.OrderSession.IdDatBan">@grandChild.Tenloaimonan</button>
+                                                </li>
+                                            }
+                                        </ul>
+                                    </li>
+                                }
+                                else
+                                {
+                                    <li>
+                                        <button type="submit" name="idLoai" value="@child.Idloaimonan" class="dropdown-item" asp-route-idDatBan="@Model.OrderSession.IdDatBan">@child.Tenloaimonan</button>
+                                    </li>
+                                }
+                            }
+                        </ul>
+                    </div>
+                }
+                else
+                {
+                    <button type="submit" name="idLoai" value="@parent.Idloaimonan" class="btn btn-outline-primary" asp-route-idDatBan="@Model.OrderSession.IdDatBan">@parent.Tenloaimonan</button>
+                }
+            }
+        </form>
+
+        <!-- Danh sách món -->
+        @if (Model.MonAnList != null && Model.MonAnList.Any())
+        {
+            <div class="row mt-3">
+                @foreach (var mon in Model.MonAnList)
+                {
+                    <div class="col-md-4 mb-3">
+                        <div class="card h-100">
+                            <img src="~/css/img/@mon.Anhmonan" class="card-img-top" style="height: 150px; object-fit: cover;" alt="@mon.Tenmonan">
+                            <div class="card-body d-flex flex-column">
+                                <h5 class="card-title">@mon.Tenmonan</h5>
+                                <p class="card-text">@mon.Giamonan.ToString("N0") VND</p>
+                             
+
+                                <div class="mt-auto">
+                                    <a asp-area="Staff" asp-controller="Order" asp-action="ChiTietMon"
+                                       asp-route-idLoai="@mon.Idloaimonan" asp-route-idMon="@mon.Idmonan" asp-route-idDatBan="@Model.OrderSession.IdDatBan"
+                                       class="btn btn-primary btn-sm">Xem chi tiết</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+
+        <!-- Chi tiết món -->
+        @if (Model.ChiTietMon != null)
+        {
+            <hr />
+            <a asp-area="Staff" asp-controller="Order" asp-action="Index" asp-route-idDatBan="@Model.OrderSession.IdDatBan">Quay lại menu</a>
+
+            <img src="~/css/img/@Model.ChiTietMon.Anhmonan" class="card-img-top" style="height: 150px; object-fit: cover;" alt="@Model.ChiTietMon.Tenmonan">
+            <h5>Chi tiết: @Model.ChiTietMon.Tenmonan</h5>
+
+            <form asp-area="Staff" asp-controller="Order" asp-action="ThemMonVaoSession" method="post">
+                <input type="hidden" name="idMon" value="@Model.ChiTietMon.Idmonan" />
+                <input type="hidden" name="idDatBan" value="@Model.OrderSession.IdDatBan" />
+                
+
+                @if (Model.ChiTietMon.ListGiaSizes != null && Model.ChiTietMon.ListGiaSizes.Any())
+                {
+                    <label>Size:</label>
+               <select name="idSize" class="form-control">
+                    @foreach (var s in Model.ChiTietMon.ListGiaSizes)
+                    {
+                            <option value="@s.Idsize" data-giasize="@s.Giasize" selected="@(Model.IdSizeSelected == s.Idsize ? "selected" : null)">
+                            @s.IdsizeNavigation.Tensize - @s.Giasize.ToString("N0") VND
+                        </option>
+                    }
+                </select>
+
+
+                }
+
+                @if (Model.ChiTietMon.Idloaimonan == "LMA01" && Model.ChiTietMon.DeBanh != null && Model.ChiTietMon.DeBanh.Any())
+                {
+                    <label>Đế bánh:</label>
+                    <select name="idDeBanh" class="form-control">
+                        @foreach (var d in Model.ChiTietMon.DeBanh)
+                        {
+                            <option value="@d.Iddebanh" data-giade="@d.Giadebanh" selected="@(Model.IdDeBanhSelected == d.Iddebanh ? "selected" : null)">
+                                @d.Tendebanh - @d.Giadebanh.ToString("N0") VND
+                            </option>
+                        }
+                    </select>
+
+
+                    @if (Model.PizzaGhepList != null && Model.PizzaGhepList.Any())
+                    {
+                        <label>Pizza ghép:</label>
+
+                        <select name="idPizzaGhep" class="form-control">
+                            <option value="">-- Không ghép --</option>
+                            @foreach (var p in Model.PizzaGhepList)
+                            {
+                                <option value="@p.Idmonan" data-giagh="@p.Giamonan" selected="@(Model.IdPizzaGhepSelected == p.Idmonan ? "selected" : null)">
+                                    @p.Tenmonan - @p.Giamonan.ToString("N0") VND
+                                </option>
+                            }
+                        </select>
+
+                    }
+                }
+
+                @if (Model.ChiTietMon.Toppings != null && Model.ChiTietMon.Toppings.Any())
+                {
+                    <div class="mt-3">
+                        <label>Topping:</label><br />
+
+                        @foreach (var t in Model.ChiTietMon.Toppings)
+                        {
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="toppings" value="@t.Idtopping"
+                                       data-giatopping="@t.Giatopping" id="topping_@t.Idtopping"
+                                @(Model.ToppingsSelected.Contains(t.Idtopping) ? "checked" : "") />
+                                <label class="form-check-label" for="topping_@t.Idtopping">
+                                    @t.Tentopping (+@t.Giatopping.ToString("N0") VND)
+                                </label>
+                            </div>
+                        }
+
+                    </div>
+                }
+
+                <label>Số lượng:</label>
+                <input type="number" name="soLuong" value="@Model.SoLuongSelected" class="form-control" min="1" />
+
+
+                <label>Ghi chú:</label>
+                <input type="text" name="ghiChu" class="form-control" value="@Model.GhiChuSelected" />
+
+
+                <!-- Tổng tạm tính -->
+                <p class="mt-2"><strong>Tạm tính: <span id="tamTinhGia">@Model.ChiTietMon.Giamonan.ToString("N0") VND</span></strong></p>
+
+                @if (Model.IsUpdate)
+                {
+                    <button type="submit" formaction="@Url.Action("CapNhatMonTrongSession", "Order", new { area = "Staff" })" class="btn btn-warning mt-3">Cập nhật</button>
+                }
+                else
+                {
+                    <button type="submit" class="btn btn-success mt-3">Thêm vào giỏ</button>
+                }
+
+
+            </form>
+
+            <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    function tinhGia() {
+                        let giaCoBan = parseInt('@Model.ChiTietMon.Giamonan') || 0;
+                        let giaGhep = 0;
+                        let pizzaGhepSelect = document.querySelector('select[name="idPizzaGhep"]');
+                        if (pizzaGhepSelect && pizzaGhepSelect.value) {
+                            giaGhep = parseInt(pizzaGhepSelect.selectedOptions[0].dataset.giagh) || 0;
+                            giaCoBan = Math.floor((giaCoBan + giaGhep) / 2);
+                        }
+
+                        let giaSize = 0;
+                        let sizeSelect = document.querySelector('select[name="idSize"]');
+                        if (sizeSelect && sizeSelect.value) {
+                            giaSize = parseInt(sizeSelect.selectedOptions[0].dataset.giasize) || 0;
+                        }
+
+                        let giaDe = 0;
+                        let deSelect = document.querySelector('select[name="idDeBanh"]');
+                        if (deSelect && deSelect.value) {
+                            giaDe = parseInt(deSelect.selectedOptions[0].dataset.giade) || 0;
+                        }
+
+                        let giaTopping = 0;
+                        let toppingCheckboxes = document.querySelectorAll('input[name="toppings"]:checked');
+                        toppingCheckboxes.forEach(c => {
+                            giaTopping += parseInt(c.dataset.giatopping) || 0;
+                        });
+
+                        let soLuong = parseInt(document.querySelector('input[name="soLuong"]').value) || 1;
+
+                        let tong = (giaCoBan + giaSize + giaDe + giaTopping) * soLuong;
+
+                        document.getElementById('tamTinhGia').innerText = tong.toLocaleString('vi-VN') + ' VND';
+                    }
+
+                    document.querySelectorAll('select, input[name="toppings"], input[name="soLuong"]').forEach(el => {
+                        el.addEventListener('change', tinhGia);
+                    });
+
+                    tinhGia(); // Gọi ngay khi load
+                });
+            </script>
+        }
+    </div>
+</div>
+

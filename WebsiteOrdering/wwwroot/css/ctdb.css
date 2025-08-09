@@ -1,0 +1,174 @@
+﻿.ctdb-container-tong {
+    background-color: white;
+    margin-left: calc(-50vw + 50%);
+    width: 100vw;
+}
+
+.ctdb-background {
+    background-color: white;
+    margin: 0 115px;
+}
+
+.ctdb-tieude {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid #aaa;
+    font-family: 'Cakelan';
+    /*    padding: 20px 0;*/
+}
+
+.ctdb-datban {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 10px;
+    flex: 1;
+}
+
+    .ctdb-datban p {
+        margin: 0;
+        font-size: 20px;
+        color: #203F25;
+        letter-spacing: 1.5px;
+        line-height: 30px;
+        font-family: 'Mestika';
+        letter-spacing: 1.5px;
+    }
+
+.ctdb-anh {
+    /* padding-left: 40px;
+      text-align: right;
+    padding: 10px 20px;*/
+}
+
+.ctdb-anh img {
+    width: 250px;
+    height: 210px;
+    object-fit: contain;
+}
+
+
+.ctdb-title h2 {
+    font-size: 32px;
+    font-weight: bold;
+    letter-spacing: 3px;
+    color: #203F25;
+    font-family: 'Cakelan';
+}
+
+.ctdb-noidung {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-top: 35px;
+    gap: 310px;
+}
+
+.ctdb-infor {
+    flex: 1;
+    text-align: left;
+}
+
+    .ctdb-infor h2,
+    .ctdb-address h2 {
+        font-size: 24px;
+        font-weight: bold;
+        color: #203F25;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        margin-bottom: 10px;
+        font-family: 'Cakelan';
+    }
+
+    .ctdb-infor p,
+    .ctdb-address p {
+        font-size: 20px;
+        color: #203F25;
+        margin: 5px 0;
+        line-height: 1.7;
+        font-family: 'Mestika';
+        letter-spacing: 1.5px;
+    }
+
+.ctdb-address {
+    flex: 1;
+    text-align: right;
+}
+
+.ctdb-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: 'Mestika';
+    margin-top: 35px;
+    letter-spacing: 1.5px;
+    table-layout: fixed;
+}
+
+    .ctdb-table thead {
+        background-color: #203F25;
+    }
+
+        .ctdb-table thead th {
+            color: #E0B37F;
+            font-size: 22px;
+            padding: 12px 8px;
+            letter-spacing: 1px;
+            text-align: center;
+            font-weight: 500;
+        }
+
+    .ctdb-table tbody td {
+        padding: 12px 8px;
+        border-bottom: 1px solid #999;
+        font-size: 20px;
+        color: #203F25;
+    }
+
+        .ctdb-table tbody td:first-child {
+            text-align: left;
+            word-break: break-word;
+        }
+
+        .ctdb-table tbody td:nth-child(2),
+        .ctdb-table tbody td:nth-child(3),
+        .ctdb-table tbody td:nth-child(4),
+        .ctdb-table tbody td:nth-child(5) {
+            text-align: center;
+            white-space: nowrap;
+        }
+
+    .ctdb-table td span {
+        font-size: 15px;
+        color: #203F25;
+        font-weight: normal;
+    }
+
+    .ctdb-table td strong {
+        font-size: 18px;
+        font-weight: 600 !important;
+    }
+
+    .ctdb-table thead th:nth-child(1),
+    .ctdb-table tbody td:nth-child(1) {
+        width: 20%;
+    }
+
+    .ctdb-table thead th:nth-child(2),
+    .ctdb-table tbody td:nth-child(2) {
+        width: 20%;
+    }
+
+    .ctdb-table thead th:nth-child(3),
+    .ctdb-table tbody td:nth-child(3) {
+        width: 20%;
+    }
+
+    .ctdb-table thead th:nth-child(4),
+    .ctdb-table tbody td:nth-child(4) {
+        width: 20%;
+    }
+    .ctdb-table thead th:nth-child(5),
+    .ctdb-table tbody td:nth-child(5) {
+        width: 20%;
+    }

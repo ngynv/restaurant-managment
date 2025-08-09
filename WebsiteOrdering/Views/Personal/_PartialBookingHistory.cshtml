@@ -1,0 +1,173 @@
+﻿@using WebsiteOrdering.Enums
+@model List<WebsiteOrdering.Models.Datban>
+
+@{
+    ViewData["Title"] = "Lịch sử đặt bàn của tôi";
+}
+
+<h2 class="personal-booking-title">Lịch sử đặt bàn</h2>
+
+@if (!Model.Any())
+{
+    <p>Bạn chưa có lịch sử đặt bàn nào.</p>
+}
+else
+{
+    <div class="personal-booking-wrapper">
+        <table class="table personal-booking-table">
+            <thead class="personal-booking-thead">
+                <tr>
+                    <th>Mã Đơn</th>
+                    <th>Thông Tin Đặt Bàn</th>
+                    <th>Trạng Thái</th>
+                    <th>Thao tác</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr class="personal-booking-row">
+                        <td class="personal-booking-code">@item.Iddatban</td>
+                        <td class="personal-booking-info">
+                            <p>Ngày đặt: @item.Ngaydat.ToString("dd/MM/yyyy")</p>
+                            <p>Giờ đặt: @item.Giobatdau.ToString(@"HH:mm") - @item.Gioketthuc.ToString(@"HH:mm")</p>
+                            <p>@item.Songuoidat Khách</p>
+                            <p>@item.IdchinhanhNavigation?.Tencnhanh</p>
+                        </td>
+                        <td class="personal-booking-status">@item.Trangthaidatban.ToFriendly()</td>
+                        <td class="personal-booking-action">
+                            @if (item.Trangthaidatban == TrangThai.Pending)
+                            {
+                                <a asp-action="CapNhatDatBan" asp-controller="Booking" asp-route-id="@item.Iddatban" class="personal-booking-btn-update">Cập nhật</a>
+                            }
+                            else if (item.Trangthaidatban == TrangThai.Confirmed)
+                            {
+                                <!-- Thay đổi từ onclick thành data attribute -->
+                                <button type="button" class="personal-booking-btn-cancel btn-huy-datban" data-id="@item.Iddatban">Hủy</button>
+                            }
+                        </td>
+                        <td class="personal-booking-detail">
+                            <a asp-controller="Booking" asp-action="ChitietDatBan" asp-route-id="@item.Iddatban">[Chi tiết]</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+<!-- Modal -->
+<div class="modal fade modal-cancel" id="huyModal" tabindex="-1" aria-labelledby="huyModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-cancel-dialog">
+        <form id="formHuy" method="post" asp-action="HuyDatBan" asp-controller="Booking">
+            <div class="modal-content modal-cancel-content">
+                <div class="modal-header modal-cancel-header">
+                    <h5 class="modal-title modal-cancel-title">Hủy Đặt Bàn</h5>
+                    <button type="button" class="btn-close modal-cancel-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+                </div>
+                <div class="modal-body modal-cancel-body">
+                    <input type="hidden" name="id" id="idDatBan" />
+                    <label class="modal-cancel-label"><strong>Hãy cho nhà hàng biết lý do hủy đặt bàn:</strong></label>
+                    <div class="list-group modal-cancel-reason-list">
+                        <label class="list-group-item modal-cancel-reason-item">
+                            <input class="form-check-input me-1 modal-cancel-radio" style="display: inline-block !important;" type="radio" name="lyDo" value="Sai thông tin đặt bàn">
+                            Sai thông tin đặt bàn
+                        </label>
+                        <label class="list-group-item modal-cancel-reason-item">
+                            <input class="form-check-input me-1 modal-cancel-radio" style="display: inline-block !important;" type="radio" name="lyDo" value="Muốn đặt bàn ở nhà hàng khác">
+                            Muốn đặt bàn ở nhà hàng khác
+                        </label>
+                        <label class="list-group-item modal-cancel-reason-item">
+                            <input class="form-check-input me-1 modal-cancel-radio" style="display: inline-block !important;" type="radio" name="lyDo" value="Thay đổi kế hoạch">
+                            Thay đổi kế hoạch
+                        </label>
+                        <label class="list-group-item modal-cancel-reason-item">
+                            <input class="form-check-input me-1 modal-cancel-radio" style="display: inline-block !important;" type="radio" name="lyDo" value="Tìm thấy một nơi khác">
+                            Tìm thấy một nơi khác
+                        </label>
+                        <label class="list-group-item modal-cancel-reason-item">
+                            <input class="form-check-input me-1 modal-cancel-radio" style="display: inline-block !important;" type="radio" name="lyDo" value="Sự cố ngoài ý muốn">
+                            Sự cố ngoài ý muốn
+                        </label>
+                        <label class="list-group-item modal-cancel-reason-item">
+                            <input class="form-check-input me-1 modal-cancel-radio" style="display: inline-block !important;" type="radio" name="lyDo" value="Bệnh, lý do cá nhân">
+                            Bệnh, lý do cá nhân
+                        </label>
+                        <label class="list-group-item modal-cancel-reason-item">
+                            <input id="radioKhac" class="form-check-input me-1 modal-cancel-radio" style="display: inline-block !important;" type="radio" name="lyDo" value="Khác">
+                            Khác (Mô tả thêm)
+                        </label>
+                    </div>
+
+                    <div id="lyDoChiTietContainer" style="display:none;" class="mt-2 modal-cancel-detail-container">
+                        <textarea class="form-control modal-cancel-textarea" name="lyDoChiTiet" id="lyDoChiTiet" placeholder="Nhập lý do chi tiết..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer modal-cancel-footer">
+                    <button type="button" class="btn btn-secondary modal-cancel-btn-close" data-bs-dismiss="modal">Đóng</button>
+                    <button type="submit" class="btn btn-danger modal-cancel-btn-submit">Xác nhận hủy</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+
+<script>
+    // Sử dụng event delegation thay vì onclick trực tiếp
+    document.addEventListener('DOMContentLoaded', function () {
+        // Event delegation cho nút hủy
+        document.addEventListener('click', function (e) {
+            if (e.target.classList.contains('btn-huy-datban')) {
+                const idDatBan = e.target.getAttribute('data-id');
+                openHuyModal(idDatBan);
+            }
+        });
+
+        // Xử lý thay đổi radio button
+        document.addEventListener('change', function (e) {
+            if (e.target.name === 'lyDo') {
+                if (e.target.value === 'Khác') {
+                    document.getElementById('lyDoChiTietContainer').style.display = 'block';
+                } else {
+                    document.getElementById('lyDoChiTietContainer').style.display = 'none';
+                    document.getElementById('lyDoChiTiet').value = '';
+                }
+            }
+        });
+
+        // Xử lý submit form
+        document.getElementById('formHuy').addEventListener('submit', function (e) {
+            const radios = document.querySelectorAll("input[name='lyDo']");
+            let checked = false;
+            radios.forEach(r => { if (r.checked) checked = true; });
+
+            if (!checked) {
+                alert('Vui lòng chọn lý do hủy.');
+                e.preventDefault();
+                return;
+            }
+
+            const radioKhac = document.getElementById('radioKhac');
+            if (radioKhac.checked) {
+                const chiTiet = document.getElementById('lyDoChiTiet').value.trim();
+                if (!chiTiet) {
+                    alert('Vui lòng nhập mô tả chi tiết khi chọn "Khác".');
+                    e.preventDefault();
+                }
+            }
+        });
+    });
+
+    // Định nghĩa hàm openHuyModal trong global scope
+    function openHuyModal(idDatBan) {
+        document.getElementById('idDatBan').value = idDatBan;
+        document.querySelectorAll("input[name='lyDo']").forEach(e => e.checked = false);
+        document.getElementById('lyDoChiTiet').value = '';
+        document.getElementById('lyDoChiTietContainer').style.display = 'none';
+        var myModal = new bootstrap.Modal(document.getElementById('huyModal'));
+        myModal.show();
+    }
+</script>

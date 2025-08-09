@@ -1,0 +1,74 @@
+﻿@using WebsiteOrdering.Areas.ViewModelAdmin
+@model MonanDeleteViewModel
+@{
+    ViewData["Title"] = "Xóa sản phẩm";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<h2>Xóa sản phẩm</h2>
+
+<div class="alert alert-warning">
+    <i class="fas fa-exclamation-triangle"></i>
+    <strong>Cảnh báo:</strong> Bạn có chắc chắn muốn xóa sản phẩm này không? Thao tác này không thể hoàn tác.
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Thông tin sản phẩm sẽ bị xóa</h5>
+                <table class="table">
+                    <tr>
+                        <td><strong>Mã sản phẩm:</strong></td>
+                        <td>@Model.Idmonan</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Tên món:</strong></td>
+                        <td>@Model.Tenmonan</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Loại món:</strong></td>
+                        <td>@Model.Tenloaimonan</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Giá:</strong></td>
+                        <td>@Model.Giamonan.ToString("N0") đ</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Trạng thái:</strong></td>
+                        <td>
+                           <span>@Model.Trangthaiman</span>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Hình ảnh sản phẩm</h5>
+                @if (!string.IsNullOrEmpty(Model.Anhmonan))
+                {
+                    <img src="~/css/img/@Model.Anhmonan" alt="@Model.Tenmonan" class="img-fluid rounded" style="width: 200px; height: auto;" />
+                }
+                else
+                {
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i> Chưa có hình ảnh
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<form asp-action="Delete" method="post" class="mt-3">
+    <input type="hidden" asp-for="Idmonan" />
+    <button type="submit" class="btn btn-danger" onclick="return confirm('Bạn có chắc chắn muốn xóa sản phẩm này không?')">
+        <i class="fas fa-trash"></i> Xác nhận xóa
+    </button>
+    <a asp-action="Index" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> Hủy bỏ
+    </a>
+</form>

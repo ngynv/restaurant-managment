@@ -1,0 +1,189 @@
+﻿@{
+    ViewData["Title"] = "Menu Flipbook";
+    Layout = "_Layout";
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/style.css" asp-append-version="true" />
+}
+<!--banner video section-->
+<div class="video-banner-homepage">
+    <video autoplay muted loop class="video-content">
+        <source src="/video/video_banner_menu.mp4" />
+        Trình duyệt của bạn không hỗ trợ phát video
+    </video>
+    <div class="video-overlay"></div>
+    <div class="video-text">
+        <h1>Khám phá</h1>
+        <h2>Tinh hoa việt trong</h2>
+        <h2>Từng trải nghiệm ẩm thực</h2>
+        <button class="btn-book-now" onclick="location.href='@Url.Action("Index", "Booking")'">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" id="restaurant-cloche" class="icon-clonche">
+                <path d="M90,76H10a2,2,0,0,1-2-2,42,42,0,0,1,84,0A2,2,0,0,1,90,76ZM12.05,72H88a38,38,0,0,0-75.9,0Z"></path>
+                <path d="M22.28 60a2 2 0 01-1-.27A2 2 0 0120.55 57a34.23 34.23 0 0121-15.93 2 2 0 111 3.87A30.23 30.23 0 0024 59 2 2 0 0122.28 60zM98 84H2a2 2 0 010-4H98a2 2 0 010 4zM50 28a6 6 0 116-6A6 6 0 0150 28zm0-8a2 2 0 102 2A2 2 0 0050 20z"></path>
+                <path d="M50,36a2,2,0,0,1-2-2V26a2,2,0,0,1,4,0v8A2,2,0,0,1,50,36Z"></path>
+            </svg>
+            <span>Đặt bàn ngay</span>
+        </button>
+    </div>
+</div>
+<div class="layout-guide">
+    <div class="intro-menu-section">
+        <div class="intro-menu-wrapper">
+            <p>
+                Thực đơn tại Céleste Élysée được xây dựng từ sự tôn trọng nguyên liệu và kỹ thuật nấu ăn chuẩn mực.
+                Nguyên liệu theo mùa, cách nêm nếm vừa đủ, phần trình bày giữ lại nét cổ điển nhưng không gò bó. Mỗi món ăn là một lời mời nhẹ nhàng – để bạn thưởng thức chậm rãi, trong không gian tĩnh lặng và ấm áp.
+                Đây không chỉ là thực đơn. Đây là cách chúng tôi kể một câu chuyện – bằng vị giác.
+            </p>
+            <img src="~/images/home/banner/img_intro_menu.jpg" class="img-intro-1" />
+        </div>
+        <div class="img-menu-wrapper">
+            <div class="img-menu-left parallax-bg"></div>
+            @* <div class="img-frame-left">
+            <img src="/images/home/banner/menu.png" class="img-menu-left parallax-img-menu" />
+            </div> *@
+            <div class="img-menu-container">
+                <div class="img-frame-right">
+                    <div class="img-menu-overlay parallax-bg"></div>
+                </div>
+                <div class="img-frame-side-right">
+                    <div class="img-menu-side parallax-bg"></div>
+                </div>
+            </div>
+        </div>
+        <div class="intro-menu-wrapper-2">
+            <img src="~/images/home/banner/img_intro_menu_2.jpg" class="img-intro-2" />
+            <p>
+                Với tinh thần đó, từng món ăn tại Céleste Élysée đều được chế biến thủ công từ đầu – không sử dụng nguyên liệu đóng sẵn.
+                Đế bánh pizza được ủ chậm và nướng trên đá nóng để đạt độ giòn hoàn hảo. Mì Ý được nhào tay mỗi ngày, kết hợp cùng các loại sốt được nấu từ nước dùng cô đặc và rau củ tươi. Ngay cả dầu húng quế hay sốt cà chua cũng đều được làm tươi tại bếp mỗi sáng.
+            </p>
+        </div>
+    </div>
+    <div class="detail-menu">
+        <h1 class="text-detail-menu">"Măm Măm"</h1>
+        <div class="flip-book-wrapper">
+            <div class="flip-book-container" id="flipBookContainer">
+                <div class="flip-book" id="flipBook">
+                    @for (int i = 1; i <= 45; i += 2)
+                    {
+                        <div class="flip-book-page" style="z-index:@(46 - i)" onclick="handlePageClick(@((i - 1) / 2))">
+                            <div class="front">
+                                <img src="~/images_menu/menu_page_@(i).jpg" alt="Trang @i" />
+                            </div>
+                            <div class="back">
+                                @{
+                                    var next = i + 1;
+                                    var backPage = next <= 45 ? next : i;
+                                }
+                                <img src="~/images_menu/menu_page_@(backPage).jpg" alt="Trang @(backPage)" />
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Thêm thẻ audio -->
+        <audio id="flipSound" src="~/sounds/flip.mp3" preload="auto"></audio>
+        <p class="description-menu">Thực đơn này chỉ mang tính chất tham khảo và các món ăn có thể thay đổi theo mùa và tùy thuộc vào nguồn nguyên liệu có sẵn. Vui lòng thông báo với nhân viên phục vụ về bất kỳ nhu cầu dinh dưỡng hoặc hạn chế nào của bạn.</p>
+        <a class="animated-underline">liên hệ</a>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        const pages = document.querySelectorAll('.flip-book-page');
+        const flipBook = document.getElementById("flipBook");
+        const flipSound = document.getElementById("flipSound");
+        let currentPage = 0;
+
+        function playFlipSound() {
+            flipSound.currentTime = 0;
+            flipSound.play();
+        }
+
+        function updateFlipbookCentering() {
+            const pageWidth = 338;
+            let offset;
+
+            if (currentPage === 0) {
+                offset = pageWidth / 2;
+            } else {
+                offset = 0;
+            }
+
+            flipBook.style.transform = `translateX(-${offset}px)`;
+
+            const container = document.getElementById('flipBookContainer');
+            if (currentPage > 0 && currentPage < pages.length) {
+                container.classList.add('show-spine');
+            } else {
+                container.classList.remove('show-spine');
+            }
+        }
+
+        function nextPage() {
+            if (currentPage < pages.length) {
+                pages[currentPage].classList.add('flipped');
+                currentPage++;
+                updateFlipbookCentering();
+                playFlipSound();
+            } else {
+                pages.forEach((page, index) => {
+                    setTimeout(() => {
+                        page.classList.remove('flipped');
+                        if (index === pages.length - 1) {
+                            currentPage = 0;
+                            updateFlipbookCentering();
+                        }
+                    }, index * 100);
+                });
+                playFlipSound();
+            }
+        }
+
+        function prevPage() {
+            if (currentPage > 0) {
+                currentPage--;
+                pages[currentPage].classList.remove('flipped');
+                updateFlipbookCentering();
+                playFlipSound();
+            }
+        }
+
+        function handlePageClick(index) {
+            if (index === currentPage) {
+                nextPage();
+            } else if (index === currentPage - 1) {
+                prevPage();
+            }
+        }
+
+        const container = document.getElementById('flipBookContainer');
+        let scrollTimeout;
+
+        container.addEventListener('wheel', function (e) {
+            e.preventDefault();
+            clearTimeout(scrollTimeout);
+            scrollTimeout = setTimeout(() => {
+                if (e.deltaY > 0) {
+                    nextPage();
+                } else {
+                    prevPage();
+                }
+            }, 30);
+        }, { passive: false });
+
+        updateFlipbookCentering();
+
+        const basePosition = -400; // phần trăm ảnh hiển thị ở giữa
+        const speed = 0.3;
+
+        window.addEventListener('scroll', () => {
+            const elements = document.querySelectorAll('.parallax-bg');
+            elements.forEach(el => {
+                const offset = window.scrollY;
+                const posY = basePosition + offset * speed;
+                el.style.backgroundPosition = `center ${posY}px`;
+            });
+        });
+    </script>
+}

@@ -1,0 +1,78 @@
+﻿@model List<WebsiteOrdering.Models.Datban>
+
+@{
+    ViewData["Title"] = "Tìm kiếm đơn đặt bàn";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    <link rel="stylesheet" href="~/css/searchban.css" />
+
+}
+
+<div class="search-hoadon">
+    <h2>@ViewData["Title"]</h2>
+
+    <form method="get" asp-action="SearchDonDatBan" asp-controller="Booking" class="row g-2 mb-4">
+        <div class="phan-timkiem">
+            <div class="search-nd">
+                <input type="text" name="maDon" class="form-control-search" placeholder="Mã đơn" value="@Context.Request.Query["maDon"]" />
+            </div>
+            <div class="search-nd">
+                <input type="text" name="sdt" class="form-control-search" placeholder="Số điện thoại" value="@Context.Request.Query["sdt"]" />
+            </div>
+            <div class="search-nd">
+                <input type="text" name="tenNguoiDat" class="form-control-search" placeholder="Tên người đặt" value="@Context.Request.Query["tenNguoiDat"]" />
+            </div>
+            <div class="search-nd">
+                <input type="text" name="emailNguoiDat" class="form-control-search" placeholder="Email người đặt" value="@Context.Request.Query["emailNguoiDat"]" />
+            </div>
+            <div class="btn-timban">
+                <button type="submit" class="timban">
+                    TÌM KIẾM
+                </button>
+            </div>
+        </div>
+    </form>
+
+    @if (!string.IsNullOrEmpty(ViewBag.Message))
+    {
+        <div class="thongbao-search">@ViewBag.Message</div>
+    }
+
+    @if (Model != null && Model.Count > 0)
+    {
+        <table class="table-timban">
+            <thead>
+                <tr>
+                    <th>Mã đơn</th>
+                    <th>Tên người đặt</th>
+                    <th>Số điện thoại</th>
+                    <th>Email</th>
+                    <th>Ngày đặt</th>
+                    <th>Chi nhánh</th>
+                    <th>Trạng thái</th>
+                    <th>Chi tiết</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var d in Model)
+                {
+                    <tr>
+                        <td>@d.Iddatban</td>
+                        <td>@d.Tenngdat</td>
+                        <td>@d.Sđtngdat</td>
+                        <td>@d.Nguoidung?.Email</td>
+                        <td>@d.Ngaydat.ToString("dd/MM/yyyy")</td>
+                        <td>@d.IdchinhanhNavigation?.Tencnhanh</td>
+                        <td>@d.Trangthaidatban</td>
+                        <td>
+                            <a asp-action="ChitietDatBan" asp-route-id="@d.Iddatban" class="btn-chitiet">Chi tiết</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else if (Model != null)
+    {
+        <p class="no-phuhop">Không tìm thấy đơn nào phù hợp.</p>
+    }
+</div>

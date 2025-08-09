@@ -1,0 +1,134 @@
+﻿.search-hoadon {
+    color: #E0B37F;
+    padding: 30px;
+/*    border-radius: 8px;*/
+/*    margin: 20px auto;*/
+}
+
+    .search-hoadon h2 {
+        text-align: center;
+        font-size: 32px;
+        margin-bottom: 45px;
+        font-weight: bold;
+        letter-spacing: 2.5px;
+    }
+
+.phan-timkiem {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: nowrap;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.search-hoadon .search-nd input {
+    background: transparent;
+    border: 2px solid #E0B37F;
+    color: #E0B37F;
+    padding: 10px 12px;
+    width: 220px;
+    height: 50px;
+    outline: none;
+    font-size: 18px;
+/*    border-radius: 5px;*/
+}
+
+    .search-hoadon .search-nd input::placeholder {
+        color: #E0B37F;
+        opacity: 0.7;
+    }
+
+.search-hoadon .btn-timban .timban {
+    background-color: #fff3cd;
+    color: #203F25;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 14px;
+/*    border-radius: 4px;*/
+    transition: 0.3s;
+    width: 150px;
+    height: 50px;
+    letter-spacing: 2px;
+}
+
+    .search-hoadon .btn-timban .timban:hover {
+        background-color: #E0B37F;
+    }
+
+.search-hoadon form::after {
+    content: "";
+    display: block;
+    border-bottom: 2px solid #E0B37F;
+    margin-top: 20px;
+}
+
+.table-timban {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+
+    .table-timban thead {
+        background-color: #fff3cd;
+        color: #1f3a2e;
+    }
+
+        .table-timban thead th {
+            padding: 12px;
+            text-align: left;
+            font-weight: bold;
+        }
+
+    .table-timban tbody tr {
+        height:65px;
+        color: white;
+        border-bottom: 1px solid #e5c49d;
+    }
+
+    .table-timban tbody td {
+        padding: 12px;
+    }
+
+    /*.table-timban tbody tr td a {*/
+/*        color: #e5c49d;*/
+    
+        /*text-decoration: none;
+        font-size: 14px;
+    }*/
+.btn-chitiet {
+    background-color: transparent;
+    border: 1px solid #fff3cd;
+    text-decoration: none;
+    color: white;
+    padding:10px;
+}
+        .btn-chitiet:hover {
+            background-color: #fff3cd;
+            text-decoration: none;
+            color: #203F25;
+        }
+
+
+.thongbao-search {
+    background-color: #fff3cd;
+    color: #203F25;
+    padding: 10px;
+    text-align: center;
+/*    border-radius: 5px;*/
+    margin-top: 10px;
+    font-size: 18px;
+}
+
+.no-phuhop {
+    font-size: 18px;
+    margin: 25px 0px 15px 0px;
+}
+
+.asdasd {
+    color: #664d03;
+    background-color: #fff3cd;
+    border-color: #ffecb5;
+}

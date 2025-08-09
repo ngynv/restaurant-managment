@@ -1,0 +1,61 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@*
+    Layout dành riêng cho Nhân viên
+*@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Staff</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="~/css/site.css" />
+    <link rel="stylesheet" href="~/css/Role.css" asp-append-version="true" />
+
+    @await RenderSectionAsync("Styles", required: false)
+
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+<body>
+    <div class="admin-container">
+        <div class="sidebar">
+            <div class="sidebar-logo">
+                <img src="/images/header/logo_restaurant.png" alt="Logo" />
+            </div>
+            <a class="sidebar-link" asp-area="Staff" asp-controller="Staff" asp-action="Index">Trang chủ</a>
+            <a class="sidebar-link" asp-area="Staff" asp-controller="BookingStaff" asp-action="Index">Đơn đặt bàn</a>
+            <a class="sidebar-link" asp-area="Staff" asp-controller="BookingStaff" asp-action="CreateDatBanTaiCho">Tạo đơn đặt bàn</a>
+            <a class="sidebar-link" asp-area="Staff" asp-controller="BookingStaff" asp-action="DanhSachKhachDaDen">Danh sách khách đã đến</a>
+            <a class="sidebar-link" asp-area="Staff" asp-controller="Orders" asp-action="">Danh sách đơn hàng</a>
+
+
+            <form asp-area="Staff" asp-controller="Staff" asp-action="LogoutStaff" method="post">
+                <button type="submit" class="logout-button">Đăng xuất</button>
+            </form>
+        </div>
+
+        <div class="content">
+            @RenderBody()
+        </div>
+    </div>
+
+    <!-- jQuery (cần thiết cho một số chức năng) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Custom Scripts -->
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

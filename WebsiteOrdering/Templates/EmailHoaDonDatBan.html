@@ -1,0 +1,61 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Thông báo hóa đơn</title>
+</head>
+<body>
+    <p>Xin chào <strong>{{TenKhachHang}}</strong>,</p>
+
+    <p>
+        Cảm ơn bạn đã sử dụng dịch vụ tại <strong>{{DiaChi}}</strong>.<br>
+        Chúng tôi xin gửi đến bạn thông tin hóa đơn thanh toán cho đơn đặt bàn với mã <strong>{{MaDonHang}}</strong>.
+    </p>
+
+    <p><strong>Chi tiết hóa đơn:</strong></p>
+    <ul>
+        <li><strong>Chi nhánh:</strong> {{DiaChi}}</li>
+        <li><strong>Ngày đặt:</strong> {{NgayDat}}</li>
+        <li><strong>Thời gian:</strong> {{GioVao}} - {{GioRa}}</li>
+        <li><strong>Phương thức thanh toán:</strong> {{PhuongThucThanhToan}}</li>
+        <li><strong>Trạng thái:</strong> {{TrangThaiThanhToan}}</li>
+    </ul>
+
+    <p><strong>Danh sách món ăn đã gọi:</strong></p>
+    <table border="1" cellpadding="5" cellspacing="0">
+        <thead>
+            <tr>
+                <th>Tên món</th>
+                <th>Size</th>
+                <th>Đế bánh</th>
+                <th>Topping</th>
+                <th>Số lượng</th>
+                <th>Thành tiền (VND)</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{MonAnHtml}} <!-- Đây là đoạn HTML đã được render sẵn từ backend -->
+        </tbody>
+    </table>
+
+    <p>
+        <strong>Tổng tiền:</strong> {{TongTien}} VND<br />
+
+        <strong>Tiền khách đưa:</strong> {{ TienKhachDua || 0 }} VND<br />
+        <strong>Tiền thừa trả lại:</strong> {{TienThua || 0}} VND<br />
+
+    </p>
+
+    <p>
+        Nếu có bất kỳ thắc mắc nào về hóa đơn, vui lòng liên hệ với chúng tôi qua số điện thoại
+        <strong>0795665488</strong> để được hỗ trợ nhanh chóng.
+    </p>
+
+    <p>Xin chân thành cảm ơn quý khách đã tin tưởng và ủng hộ.</p>
+
+    <p>
+        Trân trọng,<br />
+        Đội ngũ Nhà hàng
+    </p>
+</body>
+</html>

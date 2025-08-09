@@ -1,0 +1,52 @@
+﻿@using WebsiteOrdering.ViewModels
+@model List<CartItem>
+
+<h3>Thông tin đơn hàng</h3>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Tên sản phẩm</th>
+            <th>Size</th>
+            <th>Đế bánh</th>
+            <th>Topping</th>
+            <th>Số lượng</th>
+            <th>Ghi chú</th>
+            <th>Tổng tiền</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @item.TENSANPHAM
+                    @if (!string.IsNullOrEmpty(item.TENSANPHAM2))
+                    {
+                        <br />
+                        <small>+ Ghép với: <b>@item.TENSANPHAM2</b></small>
+                    }
+                </td>
+                <td>@item.Size</td>
+                <td>@item.DeBanh</td>
+                <td>
+                    @if (item.Topping != null && item.Topping.Any())
+                    {
+                        <ul class="mb-0">
+                            @foreach (var top in item.Topping)
+                            {
+                                <li>@top.Tentopping (@top.Giatopping₫)</li>
+                            }
+                        </ul>
+                    }
+                    else
+                    {
+                        <span>Không có</span>
+                    }
+                </td>
+                <td>@item.SoLuong</td>
+                <td>@item.GhiChu</td>
+                <td>@item.TongTien₫</td>
+            </tr>
+        }
+    </tbody>
+</table>

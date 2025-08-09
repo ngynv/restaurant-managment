@@ -1,0 +1,380 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@using WebsiteOrdering.Models
+@model WebsiteOrdering.Models.Datban
+
+@{
+	ViewData["Title"] = "Đặt bàn";
+	var chiNhanhs = ViewBag.ChiNhanh as List<Chinhanh>;
+	var banss = ViewBag.Ban as List<Ban>;
+	<link rel="stylesheet" href="~/css/datban.css" />
+
+}
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+@* <form asp-action="SearchDonDatBan" asp-controller="Booking"  method="get">
+    <button type="submit" class="btn btn-primary">Tra cứu đơn đặt bàn</button>
+</form> *@
+
+@* TRA CỨU ĐƠN ĐĂT BÀN CHƯA XỬ LÝ NÊN ĐÓNG LẠI *@
+@if (TempData["Error"] != null)
+{
+	<div class="alert alert-danger">@TempData["Error"]</div>
+}
+@if (TempData["Success"] != null)
+{
+	<div class="alert alert-success">@TempData["Success"]</div>
+}
+
+@section FullWidthContent {
+	<div class="dat-ban-video-clip">
+		<video id="video" autoplay muted loop playsinline>
+			<source src="@Url.Content("~/css/videos/banner_db.mp4")" type="video/mp4" />
+		</video>
+		<div class="dat-ban-overlay-text">
+			<h1>ĐẶT BÀN</h1>
+
+			<button class="btn-search-ban" onclick="location.href='@Url.Action("SearchDonDatBan", "Booking")'">
+				<svg xmlns="http://www.w3.org/2000/svg" class="dat-ban-icon-search" viewBox="0 0 20 20">
+					<path d="M19.4497 19.4497C18.7161 20.1834 17.5269 20.1834 16.7932 19.4497L13.4783 16.1348C12.1154 17.0091 10.5044 17.53 8.76501 17.53C3.92457 17.53 0 13.606 0 8.76497C0 3.92399 3.92457 0 8.76501 0C13.6061 0 17.53 3.92391 17.53 8.76497C17.53 10.5038 17.0085 12.1154 16.1348 13.4789L19.4497 16.7938C20.1834 17.5275 20.1834 18.7161 19.4497 19.4497ZM8.76501 2.50426C5.30754 2.50426 2.5043 5.30688 2.5043 8.76493C2.5043 12.223 5.30758 15.0256 8.76501 15.0256C12.223 15.0256 15.0257 12.223 15.0257 8.76493C15.0257 5.30688 12.223 2.50426 8.76501 2.50426Z" fill="currentColor" />
+				</svg>
+				<span>Tra cứu đơn đặt bàn</span>
+			</button>
+
+			@* @(Model != null && !string.IsNullOrEmpty(Model.Iddatban) *@
+			@*     ? $"Cập nhật đơn đặt bàn - {Model.Iddatban}" *@
+			@*     : "Đặt bàn") *@
+		</div>
+	</div>
+}
+
+<div class="dat-ban-div-text">
+	<p>LỰA CHỌN GÓC RIÊNG </p>
+	<p>Chọn vị trí lý tưởng cho buổi hẹn của bạn – nhanh chóng và dễ dàng.</p>
+	<div class="dat-ban-hostline">
+		<p>Bạn có thể <a>liên hệ hotline</a> hoặc <a>điền</a> </p>
+		<p> <a>form bên dưới</a> để đặt bàn </p>
+	</div>
+</div>
+
+@* <form asp-action="DatBan" asp-controller="Booking" method="post"> *@
+<form id="bookingForm" asp-action="@(Model != null && !string.IsNullOrEmpty(Model.Iddatban) ? "CapNhatDatBan" : "DatBan")" asp-controller="Booking" method="post" class="dat-ban-form">
+	@Html.AntiForgeryToken()
+	@if (Model != null && !string.IsNullOrEmpty(Model.Iddatban))
+	{
+		<input type="hidden" asp-for="Iddatban" id="iddatbanCurrent" />
+
+	}
+	@*  <input name="trangThaiHopLe" value="@(ViewBag.Trangthaidatban)"/> *@
+
+	<div class="dat-ban-div-mot">
+		<div class="dat-ban-form-group">
+			<label>Họ tên</label>
+			<input type="text" name="HoTenNguoiDung" class="dat-ban-form-chung"
+				   value="@(Model?.Tenngdat ?? (ViewBag.UserInfo as ApplicationUser)?.FullName ?? "")" required />
+		</div>
+
+		<div class="dat-ban-form-group">
+			<label>Email</label>
+			<input type="email" name="EmailNguoiDung" class="dat-ban-form-chung"
+					value="@(Model?.Nguoidung?.Email ?? (ViewBag.UserInfo as ApplicationUser)?.Email ?? "")" required />
+		</div>
+
+		<div class="dat-ban-form-group">
+			<label>Số điện thoại</label>
+			<input type="tel" name="SdtNguoiDung" class="dat-ban-form-chung"
+				   value="@(Model?.Sđtngdat ?? (ViewBag.UserInfo as ApplicationUser)?.PhoneNumber ?? "")" required />
+		</div>
+	</div>
+
+	<div class="dat-ban-div-hai">
+		<div class="dat-ban-form-group">
+			<label>Số khách</label>
+			<input asp-for="Songuoidat" class="dat-ban-form-chung" type="number" min="1" max="10" required />
+			<small id="warning" class="dat-ban-form-text dat-ban-text-danger" style="display:none;">
+				Với số lượng > 10 người, vui lòng liên hệ nhà hàng qua số điện thoại: 0123-456-789
+			</small>
+		</div>
+
+		<div class="dat-ban-form-group">
+			<label>Ngày đặt</label>
+			<input asp-for="Ngaydat" type="date" class="dat-ban-form-chung" min="@DateTime.Now.ToString("yyyy-MM-dd")" required />
+		</div>
+
+		<div class="dat-ban-form-group">
+			<label>Giờ bắt đầu</label>
+			<select name="Giobatdau" class="dat-ban-form-chung" required></select>
+		</div>
+	</div>
+
+	<div class="dat-ban-div-ba">
+
+		<div class="dat-ban-form-group">
+			<label>Chi nhánh</label>
+			<select id="selectChinhanh" name="Idchinhanh" class="dat-ban-form-chung" required>
+				<option value="">-- Chọn chi nhánh --</option>
+				@foreach (var cn in chiNhanhs)
+				{
+					<option value="@cn.Idchinhanh" selected="@(Model != null && !string.IsNullOrEmpty(Model.Iddatban) && cn.Idchinhanh == Model.Idchinhanh ? "selected" : null)">
+						@cn.Tencnhanh
+					</option>
+				}
+			</select>
+		</div>
+
+		<div class="dat-ban-form-group">
+			<label>Ghi chú (nếu có)</label>
+			<textarea asp-for="Ghichu" class="dat-ban-form-chung" style="width:100%"></textarea>
+		</div>
+	</div>
+
+
+
+	<div class="dat-ban-div-bon">
+		<!-- Khu vực -->
+		<div>
+			<div class="dat-ban-form-group">
+				<label>Khu vực</label>
+				<select id="selectKhuvuc" class="dat-ban-form-chung" required>
+					<option value="">-- Chọn khu vực --</option>
+					@{
+						string khuVucDaChon = null;
+						if (Model != null && Model.Chitietdatbans != null && Model.Chitietdatbans.Any())
+						{
+							khuVucDaChon = Model.Chitietdatbans.FirstOrDefault()?.IdbanNavigation?.Khuvuc;
+						}
+
+						var distinctKhuvuc = banss.Select(b => b.Khuvuc).Distinct();
+
+						foreach (var kv in distinctKhuvuc)
+						{
+							<option value="@kv" selected="@(kv == khuVucDaChon ? "selected" : null)">
+								@kv
+							</option>
+						}
+					}
+				</select>
+			</div>
+			<div class="button-wrapper">
+
+
+				@if (Model != null && !string.IsNullOrEmpty(Model.Iddatban))
+				{
+					<button type="submit" class="dat-ban-btn-datban">Cập nhật đơn</button>
+				}
+				else
+				{
+					<button type="button" class="dat-ban-btn-datban" onclick="openConfirmation()">
+						Đặt bàn <span class="timer">(05:00s)</span>
+					</button>
+				}
+			</div>
+
+			@*             <button type="button" class="dat-ban-btn-datban" onclick="openConfirmation()">Đặt bàn <span style="color:#B22222; font-family: '1FTV VIP Mestika', serif;">(05:00s)</span></button>
+            *@
+		</div>
+
+		<!-- Bàn -->
+		<div class="dat-ban-form-group">
+			@* <label>Bàn</label> *@
+			<div id="banInfo">Chưa chọn bàn</div>
+			<input type="hidden" id="selectedIdban" name="selectedIdban" value="@ViewBag.IdBanHienTai" required />
+
+			<canvas id="canvas"></canvas>
+		</div>
+	</div>
+</form>
+
+@* Hiển thị dialog hiển thị xác nhận đặt bàn *@
+<div id="confirmModal" class="dat-ban-custom-modal">
+	<div class="dat-ban-custom-modal-content">
+
+		<div class="dat-ban-modal-header">
+			<h5 class="dat-ban-modal-title">XÁC NHẬN ĐẶT BÀN</h5>
+			<button type="button" class="dat-ban-close-btn" onclick="closeModal()">
+				<span aria-hidden="true">&times;</span>
+			</button>
+		</div>
+
+		<h4>Điều khoản sử dụng bàn tại nhà hàng</h4>
+		<ul>
+			<li>Khách hàng được sử dụng bàn trong <strong>tối đa 2 tiếng</strong> tính từ giờ bắt đầu đã chọn.</li>
+			<li>Giờ kết thúc sẽ là <strong>2 tiếng sau giờ bắt đầu</strong>.</li>
+			<li>Nhà hàng chỉ giữ bàn trong vòng <strong>15 phút</strong> từ giờ bắt đầu.</li>
+			<li>Nếu khách không đến sau thời gian này, <strong>đặt bàn sẽ bị hủy</strong> để đảm bảo quyền lợi cho người khác.</li>
+		</ul>
+		<p>Vui lòng kiểm tra kỹ thông tin trước khi xác nhận.</p>
+		<label class="dat-ban-agree">
+			<input type="checkbox" id="agreeCheckbox" style="display: inline !important"> Tôi đã đọc và đồng ý với điều khoản
+		</label>
+
+		<div class="dat-ban-modal-footer">
+			<button class="dat-ban-huy" onclick="closeModal()">Hủy</button>
+			<button class="dat-ban-xacnhan" onclick="submitBooking()" id="confirmBtn" disabled>Đồng ý</button>
+		</div>
+	</div>
+</div>
+<section class="dat-ban-ribbon-container dat-ban-ribbon-white">
+	<div class="dat-ban-ribbon-track dat-ban-scroll-left" id="dat-ban-celesteTrack">
+		<div class="dat-ban-ribbon-content" id="dat-ban-celesteContent">
+			<div class="dat-ban-ribbon-item">
+				<img src="~/css/img/logo_run.png" alt="Logo" />
+				<span>CÉLESTE ÉLYSÉE</span>
+			</div>
+			<div class="dat-ban-ribbon-item">
+				<img src="~/css/img/logo_run.png" alt="Logo" />
+				<span>CÉLESTE ÉLYSÉE</span>
+			</div>
+			<div class="dat-ban-ribbon-item">
+				<img src="~/css/img/logo_run.png" alt="Logo" />
+				<span>CÉLESTE ÉLYSÉE</span>
+			</div>
+			<div class="dat-ban-ribbon-item">
+				<img src="~/css/img/logo_run.png" alt="Logo" />
+				<span>CÉLESTE ÉLYSÉE</span>
+			</div>
+			<div class="dat-ban-ribbon-item">
+				<img src="~/css/img/logo_run.png" alt="Logo" />
+				<span>CÉLESTE ÉLYSÉE</span>
+			</div>
+			<div class="dat-ban-ribbon-item">
+				<img src="~/css/img/logo_run.png" alt="Logo" />
+				<span>CÉLESTE ÉLYSÉE</span>
+			</div>
+			<div class="dat-ban-ribbon-item">
+				<img src="~/css/img/logo_run.png" alt="Logo" />
+				<span>CÉLESTE ÉLYSÉE</span>
+			</div>
+			<div class="dat-ban-ribbon-item">
+				<img src="~/css/img/logo_run.png" alt="Logo" />
+				<span>CÉLESTE ÉLYSÉE</span>
+			</div>
+			<div class="dat-ban-ribbon-item">
+				<img src="~/css/img/logo_run.png" alt="Logo" />
+				<span>CÉLESTE ÉLYSÉE</span>
+			</div>
+			<div class="dat-ban-ribbon-item">
+				<img src="~/css/img/logo_run.png" alt="Logo" />
+				<span>CÉLESTE ÉLYSÉE</span>
+			</div>
+			<div class="dat-ban-ribbon-item">
+				<img src="~/css/img/logo_run.png" alt="Logo" />
+				<span>CÉLESTE ÉLYSÉE</span>
+			</div>
+			<div class="dat-ban-ribbon-item">
+				<img src="~/css/img/logo_run.png" alt="Logo" />
+				<span>CÉLESTE ÉLYSÉE</span>
+			</div>
+			<div class="dat-ban-ribbon-item">
+				<img src="~/css/img/logo_run.png" alt="Logo" />
+				<span>CÉLESTE ÉLYSÉE</span>
+			</div>
+			<div class="dat-ban-ribbon-item">
+				<img src="~/css/img/logo_run.png" alt="Logo" />
+				<span>CÉLESTE ÉLYSÉE</span>
+			</div>
+			<div class="dat-ban-ribbon-item">
+				<img src="~/css/img/logo_run.png" alt="Logo" />
+				<span>CÉLESTE ÉLYSÉE</span>
+			</div>
+			<div class="dat-ban-ribbon-item">
+				<img src="~/css/img/logo_run.png" alt="Logo" />
+				<span>CÉLESTE ÉLYSÉE</span>
+			</div>
+		</div>
+	</div>
+</section>
+<section class="dat-ban-ribbon-container dat-ban-ribbon-beige">
+	<div class="dat-ban-ribbon-track dat-ban-scroll-right" id="dat-ban-bonTrack">
+		<div class="dat-ban-ribbon-content" id="dat-ban-bonContent">
+			<div class="dat-ban-ribbon-item-1">
+				<img src="~/css/img/icon_dish.png" alt="Icon" />
+				<span>BON APPÉTIT</span>
+			</div>
+			<div class="dat-ban-ribbon-item-1">
+				<img src="~/css/img/icon_dish.png" alt="Icon" />
+				<span>BON APPÉTIT</span>
+			</div>
+			<div class="dat-ban-ribbon-item-1">
+				<img src="~/css/img/icon_dish.png" alt="Icon" />
+				<span>BON APPÉTIT</span>
+			</div>
+			<div class="dat-ban-ribbon-item-1">
+				<img src="~/css/img/icon_dish.png" alt="Icon" />
+				<span>BON APPÉTIT</span>
+			</div>
+			<div class="dat-ban-ribbon-item-1">
+				<img src="~/css/img/icon_dish.png" alt="Icon" />
+				<span>BON APPÉTIT</span>
+			</div>
+			<div class="dat-ban-ribbon-item-1">
+				<img src="~/css/img/icon_dish.png" alt="Icon" />
+				<span>BON APPÉTIT</span>
+			</div>
+			<div class="dat-ban-ribbon-item-1">
+				<img src="~/css/img/icon_dish.png" alt="Icon" />
+				<span>BON APPÉTIT</span>
+			</div>
+			<div class="dat-ban-ribbon-item-1">
+				<img src="~/css/img/icon_dish.png" alt="Icon" />
+				<span>BON APPÉTIT</span>
+			</div>
+			<div class="dat-ban-ribbon-item-1">
+				<img src="~/css/img/icon_dish.png" alt="Icon" />
+				<span>BON APPÉTIT</span>
+			</div>
+			<div class="dat-ban-ribbon-item-1">
+				<img src="~/css/img/icon_dish.png" alt="Icon" />
+				<span>BON APPÉTIT</span>
+			</div>
+			<div class="dat-ban-ribbon-item-1">
+				<img src="~/css/img/icon_dish.png" alt="Icon" />
+				<span>BON APPÉTIT</span>
+			</div>
+			<div class="dat-ban-ribbon-item-1">
+				<img src="~/css/img/icon_dish.png" alt="Icon" />
+				<span>BON APPÉTIT</span>
+			</div>
+			<div class="dat-ban-ribbon-item-1">
+				<img src="~/css/img/icon_dish.png" alt="Icon" />
+				<span>BON APPÉTIT</span>
+			</div>
+			<div class="dat-ban-ribbon-item-1">
+				<img src="~/css/img/icon_dish.png" alt="Icon" />
+				<span>BON APPÉTIT</span>
+			</div>
+			<div class="dat-ban-ribbon-item-1">
+				<img src="~/css/img/icon_dish.png" alt="Icon" />
+				<span>BON APPÉTIT</span>
+			</div>
+		</div>
+	</div>
+</section>
+@section Scripts {
+	<script>
+		const celesteTrack = document.getElementById("dat-ban-celesteTrack");
+		const celesteContent = document.getElementById("dat-ban-celesteContent");
+		for (let i = 0; i < 2; i++) {
+			celesteTrack.appendChild(celesteContent.cloneNode(true));
+		}
+
+		const bonTrack = document.getElementById("dat-ban-bonTrack");
+		const bonContent = document.getElementById("dat-ban-bonContent");
+		for (let i = 0; i < 2; i++) {
+			bonTrack.appendChild(bonContent.cloneNode(true));
+		}
+
+		const wrapper = document.querySelector('.button-wrapper');
+		const button = document.querySelector('.dat-ban-btn-datban');
+
+		button.addEventListener('mouseenter', () => {
+			wrapper.classList.add('hovered');
+		});
+
+		button.addEventListener('mouseleave', () => {
+			wrapper.classList.remove('hovered');
+		});
+	</script>
+	<script src="~/js/indexbooking.js"></script>
+}

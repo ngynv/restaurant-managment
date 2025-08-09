@@ -1,0 +1,280 @@
+﻿@{
+    ViewData["Title"] = "Trang chủ";
+}
+<!--banner video section-->
+<div class="video-banner-homepage">
+    <video autoplay muted loop class="video-content">
+        <source src="/video/video_banner_homepage.mp4" />
+        Trình duyệt của bạn không hỗ trợ phát video
+    </video>
+    <div class="video-overlay"></div>
+    <div class="video-text">
+        <h1>Khám phá</h1>
+        <h2>Phong cách ẩm thực</h2>
+        <h2>Trân trọng thiên nhiên</h2>
+
+        <button class="btn-book-now" onclick="location.href='@Url.Action("Index", "Booking")'">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" id="restaurant-cloche" class="icon-clonche">
+                <path d="M90,76H10a2,2,0,0,1-2-2,42,42,0,0,1,84,0A2,2,0,0,1,90,76ZM12.05,72H88a38,38,0,0,0-75.9,0Z"></path>
+                <path d="M22.28 60a2 2 0 01-1-.27A2 2 0 0120.55 57a34.23 34.23 0 0121-15.93 2 2 0 111 3.87A30.23 30.23 0 0024 59 2 2 0 0122.28 60zM98 84H2a2 2 0 010-4H98a2 2 0 010 4zM50 28a6 6 0 116-6A6 6 0 0150 28zm0-8a2 2 0 102 2A2 2 0 0050 20z"></path>
+                <path d="M50,36a2,2,0,0,1-2-2V26a2,2,0,0,1,4,0v8A2,2,0,0,1,50,36Z"></path>
+            </svg>
+            <span>Đặt bàn ngay</span>
+        </button>
+    </div>
+</div>
+<div class="layout-guide">
+    <div class="intro-section">
+        <h2>Men và mộng</h2>
+        <h1>Vầng khói tròn</h1>
+        <p>Giữa nhịp thành phố như bản hòa âm không dứt, chiếc bàn đá xám ánh lên như gương hồ tĩnh lặng.</p>
+        <p>Một nhóm người – không vội vã – tụ họp lại bên chai rượu vang sóng sánh, ánh nhìn va chạm nhau như thể vừa nhớ lại điều gì rất xa, rất gần.</p>
+        <p>Từ tầng vị giác gợi mở: bánh nướng vàng, truffle ẩn mình, rau thơm bung hương…</p>
+        <p>Từ tầng cảm xúc ngân vang: ký ức cổ đại, khói lửa tổ tiên, giấc mơ về một nơi chưa từng hiện diện.</p>
+        <p>
+            Này một thế giới tròn xoay – không điểm bắt đầu, không đoạn kết,
+            này hơi thở thảo mộc sau mưa, này miếng pho mát vừa lên tiếng,
+            này thớ bột chín tới, này vệt dầu uốn cong ý niệm thời gian...
+        </p>
+        <p class="intro-line">Đong tay.</p>
+        <p class="intro-line">Rắc </p>
+        <p class="intro-line">bột.</p>
+        <p class="intro-line">Trộn</p>
+        <p class="intro-line">đều.</p>
+        <p class="intro-line">Bắt lửa.</p>
+        <p class="intro-end">… Rồi, trong khoảnh khắc tưởng như im lặng nhất,</p>
+        <p class="intro-end-2">một lát bánh mở ra cánh cổng.</p>
+        <a href="/about" class="animated-underline">Khám phá câu chuyện</a>
+    </div>
+    <div class="quotes-container col-span-14">
+        <div class="quote-wrapper">
+            <div class="quote-img-container">
+                <div class="parallax-element" id="parallax-left">
+                    <div class="quote-img-left">
+                        <img src="/images/home/quote/quotes.jpg" alt="chef" class="quote-img" asp-append-version="true" />
+                    </div>
+                </div>
+            </div>
+            <div class="quote-center">
+                <div class="background-shape rotating">
+                    <img src="~/images/home/quote/bg_shape.png" alt="shape" id="quote-shape" />
+                    <div class="quote-texts">
+                        <p class="quote-text" id="quote-text">"Một niềm vui để thưởng thức chậm rãi."</p>
+                    </div>
+                </div>
+            </div>
+            <div class="quote-img-container">
+                <div class="parallax-element" id="parallax-right">
+                    <img src="/images/home/quote/quotes_2.jpg" alt="chef" class="quote-img" asp-append-version="true" />
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="award-container">
+        <div class="award-text">
+            <a>Giải thưởng & báo chí</a>
+        </div>
+        <div class="award-image">
+            <div class="award-item">
+                <img src="/images/home/award/50TOP_logo.png" alt="50 top" />
+            </div>
+
+            <div class="award-item award-asia">
+                <img src="/images/home/award/asia_best_restaurant.png" alt="50 top" />
+            </div>
+
+            <div class="award-item award-gamberorosso">
+                <img src="/images/home/award/gamberorosso_logo.png" alt="50 top" />
+            </div>
+
+            <div class="award-item award-night-life">
+                <img src="/images/home/award/restaurant_night_life_logo.png" alt="50 top" />
+            </div>
+
+            <div class="award-item">
+                <img src="/images/home/award/michelin_2025_logo.png" alt="50 top" />
+            </div>
+
+            <div class="award-item award-traveler">
+                <img src="/images/home/award/traveler_logo.png" alt="50 top" />
+            </div>
+        </div>
+    </div>
+
+    <div class="widget">
+        <div class="widget-container">
+            <div class="widget-wrapper">
+                <a asp-controller="Home" asp-action="MenuBook" class="widget-item">
+                    <span class="widget-caption-menu">
+                        Thực đơn
+                        <svg xmlns="http://www.w3.org/2000/svg" width="23" height="22" viewBox="0 0 23 22" fill="none">
+                            <path d="M22.6777 2.00007C22.6777 0.895495 21.7822 6.46263e-05 20.6777 6.54692e-05L2.67767 6.50477e-05C1.5731 6.50477e-05 0.67767 0.895495 0.67767 2.00007C0.67767 3.10463 1.5731 4.00007 2.67767 4.00007L18.6777 4.00006L18.6777 20.0001C18.6777 21.1046 19.5731 22.0001 20.6777 22.0001C21.7822 22.0001 22.6777 21.1046 22.6777 20.0001L22.6777 2.00007ZM3 19.6777L4.41421 21.0919L22.0919 3.41428L20.6777 2.00007L19.2635 0.585852L1.58579 18.2635L3 19.6777Z" fill="currentColor" />
+                        </svg>
+                    </span>
+                    <div class="widget-img-wrapper">
+                        <svg width="394" height="594" viewBox="0 0 394 594" xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                                <pattern id="pattern-widget-menu" patternUnits="userSpaceOnUse" width="394" height="594">
+                                    <image href="/images/home/widget/widget_menu.jpg" x="0" y="0" width="394" height="594" preserveAspectRatio="xMidYMid slice" />
+                                </pattern>
+                            </defs>
+                            <path d="M104.056 0H378C386.837 0 394 7.16346 394 16V578C394 586.837 386.837 594 378 594H16C7.16344 594 0 586.837 0 578V134.784C0 131.352 1.10313 128.012 3.1466 125.255L91.2025 6.47161C94.2204 2.40065 98.9883 0 104.056 0Z" fill="url(#pattern-widget-menu)" />
+                        </svg>
+                    </div>
+                </a>
+
+                <a asp-controller="Home" asp-action="ThucDonOnline" class="widget-item-2">
+                    <span class="widget-caption-order">
+                        Đặt món
+                        <svg xmlns="http://www.w3.org/2000/svg" width="23" height="22" viewBox="0 0 23 22" fill="none">
+                            <path d="M22.6777 2.00007C22.6777 0.895495 21.7822 6.46263e-05 20.6777 6.54692e-05L2.67767 6.50477e-05C1.5731 6.50477e-05 0.67767 0.895495 0.67767 2.00007C0.67767 3.10463 1.5731 4.00007 2.67767 4.00007L18.6777 4.00006L18.6777 20.0001C18.6777 21.1046 19.5731 22.0001 20.6777 22.0001C21.7822 22.0001 22.6777 21.1046 22.6777 20.0001L22.6777 2.00007ZM3 19.6777L4.41421 21.0919L22.0919 3.41428L20.6777 2.00007L19.2635 0.585852L1.58579 18.2635L3 19.6777Z" fill="currentColor" />
+                        </svg>
+                    </span>
+                    <div class="widget-img-wrapper">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="395" height="594" viewBox="0 0 395 594" fill="none">
+                            <defs>
+                                <pattern id="pattern-widget-order" patternUnits="userSpaceOnUse" width="395" height="594">
+                                    <image href="/images/home/widget/widget_book.jpg" x="0" y="0" width="395" height="594" preserveAspectRatio="xMidYMid slice" />
+                                </pattern>
+                            </defs>
+                            <path d="M289.951 0H16.4865C7.65524 0 0.493977 7.15523 0.486543 15.9865L0.0134794 577.987C0.00603675 586.828 7.17166 594 16.0135 594H378.5C387.337 594 394.5 586.837 394.5 578V135.289C394.5 131.855 393.395 128.511 391.347 125.753L302.798 6.46337C299.779 2.39724 295.014 0 289.951 0Z" fill="url(#pattern-widget-order)" />
+                        </svg>
+                    </div>
+                </a>
+            </div>
+
+            <div class="widget-wrapper-2">
+                <a asp-controller="Home" asp-action="AboutUs" class="widget-item">
+                    <span class="widget-caption-introduce">
+                        Giới thiệu
+                        <svg xmlns="http://www.w3.org/2000/svg" width="23" height="22" viewBox="0 0 23 22" fill="none">
+                            <path d="M22.6777 2.00007C22.6777 0.895495 21.7822 6.46263e-05 20.6777 6.54692e-05L2.67767 6.50477e-05C1.5731 6.50477e-05 0.67767 0.895495 0.67767 2.00007C0.67767 3.10463 1.5731 4.00007 2.67767 4.00007L18.6777 4.00006L18.6777 20.0001C18.6777 21.1046 19.5731 22.0001 20.6777 22.0001C21.7822 22.0001 22.6777 21.1046 22.6777 20.0001L22.6777 2.00007ZM3 19.6777L4.41421 21.0919L22.0919 3.41428L20.6777 2.00007L19.2635 0.585852L1.58579 18.2635L3 19.6777Z" fill="currentColor" />
+                        </svg>
+                    </span>
+                    <div class="widget-img-wrapper">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="395" height="595" viewBox="0 0 395 595" fill="none">
+                            <defs>
+                                <pattern id="pattern-widget-introduce" patternUnits="userSpaceOnUse" width="395" height="595">
+                                    <image href="/images/home/widget/widget_introduce.png" x="0" y="0" width="395" height="595" preserveAspectRatio="xMidYMid slice" />
+                                </pattern>
+                            </defs>
+                            <path d="M104.549 594.8H378.013C386.845 594.8 394.006 587.645 394.013 578.813L394.487 16.8133C394.494 7.97144 387.328 0.799805 378.487 0.799805H16C7.16345 0.799805 0 7.96326 0 16.7998V459.51C0 462.945 1.10541 466.289 3.15271 469.047L91.7022 588.336C94.7205 592.403 99.4855 594.8 104.549 594.8Z" fill="url(#pattern-widget-introduce)" />
+                        </svg>
+                    </div>
+                </a>
+
+                <a asp-controller="Booking" asp-action="Index" class="widget-item-2">
+                    <span class="widget-caption-book">
+                        Đặt bàn
+                        <svg xmlns="http://www.w3.org/2000/svg" width="23" height="22" viewBox="0 0 23 22" fill="none">
+                            <path d="M22.6777 2.00007C22.6777 0.895495 21.7822 6.46263e-05 20.6777 6.54692e-05L2.67767 6.50477e-05C1.5731 6.50477e-05 0.67767 0.895495 0.67767 2.00007C0.67767 3.10463 1.5731 4.00007 2.67767 4.00007L18.6777 4.00006L18.6777 20.0001C18.6777 21.1046 19.5731 22.0001 20.6777 22.0001C21.7822 22.0001 22.6777 21.1046 22.6777 20.0001L22.6777 2.00007ZM3 19.6777L4.41421 21.0919L22.0919 3.41428L20.6777 2.00007L19.2635 0.585852L1.58579 18.2635L3 19.6777Z" fill="currentColor" />
+                        </svg>
+                    </span>
+                    <div class="widget-img-wrapper">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="395" height="595" viewBox="0 0 395 595" fill="none">
+                            <defs>
+                                <pattern id="pattern-widget-book" patternUnits="userSpaceOnUse" width="395" height="595">
+                                    <image href="/images/home/widget/widget_order.jpg" x="0" y="0" width="395" height="595" preserveAspectRatio="xMidYMid slice" />
+                                </pattern>
+                            </defs>
+                            <path d="M290.444 594.8H16.5C7.66345 594.8 0.5 587.636 0.5 578.8V16.7998C0.5 7.96326 7.66345 0.799805 16.5 0.799805H378.5C387.337 0.799805 394.5 7.96326 394.5 16.7998V460.016C394.5 463.447 393.397 466.788 391.353 469.544L303.297 588.328C300.28 592.399 295.512 594.8 290.444 594.8Z" fill="url(#pattern-widget-book)" />
+                        </svg>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="paragraph-section">
+        <div class="left-paragraph">
+            <p>Tại <a>Céleste Élysée</a> , chúng tôi tin rằng mỗi món ăn là một hành trình – không phải của vị giác, mà của cảm xúc. Chúng tôi không nấu để lấp đầy, mà để gợi mở: một ký ức xa xăm, một ý niệm văn hóa, một khoảnh khắc đời sống.</p>
+            <p>Với thực đơn được kiến tạo theo từng chủ đề riêng biệt, mỗi bữa ăn là một chương truyện, nơi hương – vị – sắc cùng nhau kể lại điều gì đó thân quen mà vẫn mới lạ. Chúng tôi xem ẩm thực là chất liệu để đối thoại – giữa truyền thống và hiện đại, giữa con người và cội nguồn, giữa đầu bếp và thực khách.</p>
+            <p>Ở đây, bạn không chỉ ăn, mà lắng nghe. Không chỉ no, mà rung động.</p>
+        </div>
+        <div class="right-paragraph">
+            <h2>“Ẩm thực không chỉ để thưởng thức – mà để thấu cảm.”</h2>
+        </div>
+    </div>
+
+    <div class="splide-slide-section">
+        <div id="svg-carousel" class="splide peek-carousel">
+            <div class="splide__track">
+                <ul class="splide__list">
+                    <!-- Slide 1 -->
+                    <li class="splide__slide">
+                        <div class="slide-slide-container">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="1058" height="590" viewBox="0 0 1058 590" fill="none">
+                                <defs>
+                                    <pattern id="pattern-slide-1" patternUnits="userSpaceOnUse" width="1058" height="590">
+                                        <image href="/images/home/splide_slide/slide_slide.jpg" x="0" y="0" width="1058" height="590" preserveAspectRatio="xMidYMid slice" />
+                                    </pattern>
+                                </defs>
+                                <path d="M1057.5 499.667L1057.4 499.801L989.954 589.301L989.804 589.5H67.9814L67.8311 589.301L0.600586 499.801L0.5 499.667V94.8398L0.59375 94.709L67.8242 0.708984L67.9736 0.5H989.805L989.955 0.701172L1057.4 91.0195L1057.5 91.1533V499.667Z" fill="url(#pattern-slide-1)" />
+                                <path class="svg-overlay" d="M1057.5 499.667L1057.4 499.801L989.954 589.301L989.804 589.5H67.9814L67.8311 589.301L0.600586 499.801L0.5 499.667V94.8398L0.59375 94.709L67.8242 0.708984L67.9736 0.5H989.805L989.955 0.701172L1057.4 91.0195L1057.5 91.1533V499.667Z" fill="white" fill-opacity="0.5" />
+                                <path d="M1057.5 499.667L1057.4 499.801L989.954 589.301L989.804 589.5H67.9814L67.8311 589.301L0.600586 499.801L0.5 499.667V94.8398L0.59375 94.709L67.8242 0.708984L67.9736 0.5H989.805L989.955 0.701172L1057.4 91.0195L1057.5 91.1533V499.667Z" stroke="#E0B37F" />
+                            </svg>
+                        </div>
+                    </li>
+                    <!-- Slide 2 -->
+                    <li class="splide__slide">
+                        <div class="slide-slide-container">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="1058" height="590" viewBox="0 0 1058 590" fill="none">
+                                <defs>
+                                    <pattern id="pattern-slide-2" patternUnits="userSpaceOnUse" width="1058" height="590">
+                                        <image href="/images/home/splide_slide/slide_slide_2.jpg" x="0" y="0" width="1058" height="590" preserveAspectRatio="xMidYMid slice" />
+                                    </pattern>
+                                </defs>
+                                <path d="M1057.5 499.667L1057.4 499.801L989.954 589.301L989.804 589.5H67.9814L67.8311 589.301L0.600586 499.801L0.5 499.667V94.8398L0.59375 94.709L67.8242 0.708984L67.9736 0.5H989.805L989.955 0.701172L1057.4 91.0195L1057.5 91.1533V499.667Z" fill="url(#pattern-slide-2)" />
+                                <path class="svg-overlay" d="M1057.5 499.667L1057.4 499.801L989.954 589.301L989.804 589.5H67.9814L67.8311 589.301L0.600586 499.801L0.5 499.667V94.8398L0.59375 94.709L67.8242 0.708984L67.9736 0.5H989.805L989.955 0.701172L1057.4 91.0195L1057.5 91.1533V499.667Z" fill="white" fill-opacity="0.5" />
+                                <path d="M1057.5 499.667L1057.4 499.801L989.954 589.301L989.804 589.5H67.9814L67.8311 589.301L0.600586 499.801L0.5 499.667V94.8398L0.59375 94.709L67.8242 0.708984L67.9736 0.5H989.805L989.955 0.701172L1057.4 91.0195L1057.5 91.1533V499.667Z" stroke="#E0B37F" />
+                            </svg>
+                        </div>
+                    </li>
+                    <!-- Slide 3 -->
+                    <li class="splide__slide">
+                        <div class="slide-slide-container">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="1058" height="590" viewBox="0 0 1058 590" fill="none">
+                                <defs>
+                                    <pattern id="pattern-slide-3" patternUnits="userSpaceOnUse" width="1058" height="590">
+                                        <image href="/images/home/splide_slide/slide_slide_3.jpg" x="0" y="0" width="1058" height="590" preserveAspectRatio="xMidYMid slice" />
+                                    </pattern>
+                                </defs>
+                                <path d="M1057.5 499.667L1057.4 499.801L989.954 589.301L989.804 589.5H67.9814L67.8311 589.301L0.600586 499.801L0.5 499.667V94.8398L0.59375 94.709L67.8242 0.708984L67.9736 0.5H989.805L989.955 0.701172L1057.4 91.0195L1057.5 91.1533V499.667Z" fill="url(#pattern-slide-3)" />
+                                <path class="svg-overlay" d="M1057.5 499.667L1057.4 499.801L989.954 589.301L989.804 589.5H67.9814L67.8311 589.301L0.600586 499.801L0.5 499.667V94.8398L0.59375 94.709L67.8242 0.708984L67.9736 0.5H989.805L989.955 0.701172L1057.4 91.0195L1057.5 91.1533V499.667Z" fill="white" fill-opacity="0.5" />
+                                <path d="M1057.5 499.667L1057.4 499.801L989.954 589.301L989.804 589.5H67.9814L67.8311 589.301L0.600586 499.801L0.5 499.667V94.8398L0.59375 94.709L67.8242 0.708984L67.9736 0.5H989.805L989.955 0.701172L1057.4 91.0195L1057.5 91.1533V499.667Z" stroke="#E0B37F" />
+                            </svg>
+                        </div>
+                    </li>
+                    <!-- Slide 4 -->
+                    <li class="splide__slide">
+                        <div class="slide-slide-container">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="1058" height="590" viewBox="0 0 1058 590" fill="none">
+                                <defs>
+                                    <pattern id="pattern-slide-4" patternUnits="userSpaceOnUse" width="1058" height="590">
+                                        <image href="/images/home/splide_slide/slide_slide_4.jpg" x="0" y="0" width="1058" height="590" preserveAspectRatio="xMidYMid slice" />
+                                    </pattern>
+                                </defs>
+                                <path d="M1057.5 499.667L1057.4 499.801L989.954 589.301L989.804 589.5H67.9814L67.8311 589.301L0.600586 499.801L0.5 499.667V94.8398L0.59375 94.709L67.8242 0.708984L67.9736 0.5H989.805L989.955 0.701172L1057.4 91.0195L1057.5 91.1533V499.667Z" fill="url(#pattern-slide-4)" />
+                                <path class="svg-overlay" d="M1057.5 499.667L1057.4 499.801L989.954 589.301L989.804 589.5H67.9814L67.8311 589.301L0.600586 499.801L0.5 499.667V94.8398L0.59375 94.709L67.8242 0.708984L67.9736 0.5H989.805L989.955 0.701172L1057.4 91.0195L1057.5 91.1533V499.667Z" fill="white" fill-opacity="0.5" />
+                                <path d="M1057.5 499.667L1057.4 499.801L989.954 589.301L989.804 589.5H67.9814L67.8311 589.301L0.600586 499.801L0.5 499.667V94.8398L0.59375 94.709L67.8242 0.708984L67.9736 0.5H989.805L989.955 0.701172L1057.4 91.0195L1057.5 91.1533V499.667Z" stroke="#E0B37F" />
+                            </svg>
+                        </div>
+                    </li>
+                    <li class="splide__slide">
+                        <div class="slide-slide-container">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="1058" height="590" viewBox="0 0 1058 590" fill="none">
+                                <defs>
+                                    <pattern id="pattern-slide-5" patternUnits="userSpaceOnUse" width="1058" height="590">
+                                        <image href="/images/home/splide_slide/slide_slide_5.jpg" x="0" y="0" width="1058" height="590" preserveAspectRatio="xMidYMid slice" />
+                                    </pattern>
+                                </defs>
+                                <path d="M1057.5 499.667L1057.4 499.801L989.954 589.301L989.804 589.5H67.9814L67.8311 589.301L0.600586 499.801L0.5 499.667V94.8398L0.59375 94.709L67.8242 0.708984L67.9736 0.5H989.805L989.955 0.701172L1057.4 91.0195L1057.5 91.1533V499.667Z" fill="url(#pattern-slide-5)" />
+                                <path class="svg-overlay" d="M1057.5 499.667L1057.4 499.801L989.954 589.301L989.804 589.5H67.9814L67.8311 589.301L0.600586 499.801L0.5 499.667V94.8398L0.59375 94.709L67.8242 0.708984L67.9736 0.5H989.805L989.955 0.701172L1057.4 91.0195L1057.5 91.1533V499.667Z" fill="white" fill-opacity="0.5" />
+                                <path d="M1057.5 499.667L1057.4 499.801L989.954 589.301L989.804 589.5H67.9814L67.8311 589.301L0.600586 499.801L0.5 499.667V94.8398L0.59375 94.709L67.8242 0.708984L67.9736 0.5H989.805L989.955 0.701172L1057.4 91.0195L1057.5 91.1533V499.667Z" stroke="#E0B37F" />
+                            </svg>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

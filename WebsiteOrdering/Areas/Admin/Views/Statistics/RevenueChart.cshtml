@@ -1,0 +1,158 @@
+﻿@{
+	ViewData["Title"] = "Thống kê doanh thu";
+	var currentYear = DateTime.Now.Year;
+}
+<link href="~/css/statistics.css" rel="stylesheet" />
+
+<div class="container">
+    <div class="header fade-in">
+        <h1><i class="fas fa-chart-line"></i> Thống kê doanh thu</h1>
+        <div class="total-revenue">
+            <i class="fas fa-coins"></i>
+            <span>Tổng doanh thu: <strong id="totalRevenue">@(ViewBag.TotalRevenue?.ToString("N0") ?? "0") đ</strong></span>
+        </div>
+    </div>
+
+    <div class="content-grid">
+        <div class="chart-section fade-in">
+            <h2 id="chartTitle">
+                <i class="fas fa-chart-bar"></i>
+                Biểu đồ doanh thu theo ngày
+            </h2>
+            <div class="chart-container">
+                <canvas id="revenueChart"></canvas>
+            </div>
+        </div>
+
+        <div class="filter-section fade-in">
+            <h3><i class="fas fa-filter"></i> Lọc thống kê</h3>
+            <form id="branchForm">
+                @await Component.InvokeAsync("BranchDropdown", new { selectedBranchId = ViewBag.SelectedBranchId })
+            </form>
+            <div class="form-group">
+                <label for="orderType">
+                    <i class="fas fa-store"></i> Hình thức:
+                </label>
+                <select id="orderType" name="orderType">
+                    <option value="">-- Tất cả --</option>
+                    <option value="restaurant">Tại nhà hàng</option>
+                    <option value="online">Mua online</option>
+                </select>
+            </div>
+            <!-- Tabs -->
+            <div class="filter-tabs">
+                <button type="button" class="tab-btn active" data-tab="date-range">
+                    <i class="fas fa-calendar-day"></i> Khoảng ngày
+                </button>
+                <button type="button" class="tab-btn" data-tab="month-year">
+                    <i class="fas fa-calendar-alt"></i> Tháng / Năm
+                </button>
+                <button type="button" class="tab-btn" data-tab="year-only">
+                    <i class="fas fa-calendar"></i> Theo năm
+                </button>
+            </div>
+
+            <!-- Date Range Filter -->
+            <form id="filterForm" class="tab-content" data-tab="date-range">
+                <div class="form-group">
+                    <label for="fromDate">
+                        <i class="fas fa-calendar-alt"></i> Từ ngày:
+                    </label>
+                    <input type="date" id="fromDate" name="fromDate" required>
+                </div>
+                <div class="form-group">
+                    <label for="toDate">
+                        <i class="fas fa-calendar-alt"></i> Đến ngày:
+                    </label>
+                    <input type="date" id="toDate" name="toDate" required>
+                </div>
+                <button type="submit" class="btn-submit">
+                    <i class="fas fa-search"></i> Xem biểu đồ ngày
+                </button>
+            </form>
+
+            <!-- Month/Year Filter -->
+            <form id="monthYearForm" class="tab-content hidden" data-tab="month-year">
+                <div class="form-group">
+                    <label for="monthSelect">
+                        <i class="fas fa-calendar"></i> Tháng:
+                    </label>
+                    <select id="monthSelect">
+                        <option value="1">Tháng 1</option>
+                        <option value="2">Tháng 2</option>
+                        <option value="3">Tháng 3</option>
+                        <option value="4">Tháng 4</option>
+                        <option value="5">Tháng 5</option>
+                        <option value="6">Tháng 6</option>
+                        <option value="7">Tháng 7</option>
+                        <option value="8">Tháng 8</option>
+                        <option value="9">Tháng 9</option>
+                        <option value="10">Tháng 10</option>
+                        <option value="11">Tháng 11</option>
+                        <option value="12">Tháng 12</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="yearSelect">
+                        <i class="fas fa-calendar"></i> Năm:
+                    </label>
+                    <select id="yearSelect">
+                        @for (int year = currentYear; year >= currentYear - 10; year--)
+                        {
+                            if (year == currentYear)
+                            {
+                                @:
+                                <option value="@year" selected>@year</option>
+                            }
+                            else
+                            {
+                                @:
+                                <option value="@year">@year</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <button type="submit" class="btn-submit" id="viewMonthYearBtn">
+                    <i class="fas fa-search"></i> Xem biểu đồ tháng
+                </button>
+            </form>
+
+            <!-- Year Only Filter -->
+            <form id="yearOnlyForm" class="tab-content hidden" data-tab="year-only">
+                <div class="form-group">
+                    <label for="yearOnlySelect">
+                        <i class="fas fa-calendar"></i> Năm:
+                    </label>
+                    <select id="yearOnlySelect">
+                        @for (int year = currentYear; year >= currentYear - 10; year--)
+                        {
+                            if (year == currentYear)
+                            {
+                                @:
+                                <option value="@year" selected>@year</option>
+                            }
+                            else
+                            {
+                                @:
+                                <option value="@year">@year</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <button type="submit" class="btn-submit" id="viewYearBtn">
+                    <i class="fas fa-search"></i> Xem biểu đồ năm
+                </button>
+            </form>
+
+            <!-- Loading Indicator -->
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                Đang tải dữ liệu...
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+	<script src="~/js/statistics.js"></script>
+}

@@ -1,0 +1,351 @@
+﻿@using WebsiteOrdering.Areas.ViewModelAdmin
+@model List<MonanIndexViewModel>
+@{
+    ViewData["Title"] = "Quản lý sản phẩm";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
+<div class="content-title-for-here">
+    <h2>Quản lý sản phẩm</h2>
+</div><!-- Phần filter và search -->
+<div class="card mb-4">
+    <div class="card-header">
+        <h5 class="card-title mb-0">Bộ lọc và tìm kiếm</h5>
+    </div>
+    <div class="card-body">
+        <form method="get" asp-action="Index" class="row g-3">
+            <!-- Lọc theo loại sản phẩm -->
+            <div class="col-md-4">
+                <label class="form-label">Loại sản phẩm:</label>
+                <select name="categoryId" class="form-select" onchange="this.form.submit()">
+                    <option value="">Tất cả các loại</option>
+                    @{
+                        var allCategories = (List<Loaimonan>)ViewBag.Categories;
+                        if (allCategories != null)
+                        {
+                            var parentCategories = allCategories.Where(c => string.IsNullOrEmpty(c.IdloaimanCha)).ToList();
+
+                            foreach (var parentCategory in parentCategories)
+                            {
+                                var isParentSelected = ViewBag.SelectedCategory?.ToString() == parentCategory.Idloaimonan;
+                                if (isParentSelected)
+                                {
+                                    <option value="@parentCategory.Idloaimonan" selected>
+                                        @parentCategory.Tenloaimonan
+                                    </option>
+                                }
+                                else
+                                {
+                                    <option value="@parentCategory.Idloaimonan">
+                                        @parentCategory.Tenloaimonan
+                                    </option>
+                                }
+
+                                var directChildren = allCategories.Where(c => c.IdloaimanCha == parentCategory.Idloaimonan).ToList();
+                                foreach (var childCategory in directChildren)
+                                {
+                                    var isChildSelected = ViewBag.SelectedCategory?.ToString() == childCategory.Idloaimonan;
+                                    if (isChildSelected)
+                                    {
+                                        <option value="@childCategory.Idloaimonan" selected>
+                                            &nbsp;&nbsp;&nbsp;&nbsp;@childCategory.Tenloaimonan
+                                        </option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@childCategory.Idloaimonan">
+                                            &nbsp;&nbsp;&nbsp;&nbsp;@childCategory.Tenloaimonan
+                                        </option>
+                                    }
+
+                                    var grandChildren = allCategories.Where(c => c.IdloaimanCha == childCategory.Idloaimonan).ToList();
+                                    foreach (var grandChild in grandChildren)
+                                    {
+                                        var isGrandChildSelected = ViewBag.SelectedCategory?.ToString() == grandChild.Idloaimonan;
+                                        if (isGrandChildSelected)
+                                        {
+                                            <option value="@grandChild.Idloaimonan" selected>
+                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@grandChild.Tenloaimonan
+                                            </option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@grandChild.Idloaimonan">
+                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@grandChild.Tenloaimonan
+                                            </option>
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                </select>
+            </div>
+
+            <!-- Tìm kiếm -->
+            <div class="col-md-5">
+                <label class="form-label">Tìm kiếm:</label>
+                <div class="input-group">
+                    <input type="text" name="searchTerm" class="form-control"
+                           placeholder="Nhập tên món ăn cần tìm..."
+                           value="@ViewBag.SearchTerm"
+                           id="searchInput"
+                           autocomplete="off">
+                    <button class="btn btn-primary" type="submit">
+                        <i class="fas fa-search"></i> Tìm kiếm
+                    </button>
+                    <button class="btn btn-secondary" type="button" onclick="clearSearch()">
+                        <i class="fas fa-times"></i> Xóa
+                    </button>
+                </div>
+
+                <!-- Dropdown gợi ý tìm kiếm -->
+                <div class="dropdown position-relative">
+                    <ul class="dropdown-menu w-100" id="searchSuggestions" style="max-height: 300px; overflow-y: auto; position: absolute; top: 100%; left: 0; z-index: 1000;">
+                        <!-- Gợi ý sẽ được thêm bằng JavaScript -->
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Số lượng hiển thị -->
+            <div class="col-md-3">
+                <label class="form-label">Hiển thị:</label>
+                <select name="pageSize" class="form-select" onchange="this.form.submit()">
+                    @{
+                        var currentPageSize = ViewBag.PageSize;
+                    }
+                    @if (currentPageSize == 7)
+                    {
+                        <option value="7" selected>7 sản phẩm</option>
+                    }
+                    else
+                    {
+                        <option value="7">7 sản phẩm</option>
+                    }
+
+                    @if (currentPageSize == 14)
+                    {
+                        <option value="14" selected>14 sản phẩm</option>
+                    }
+                    else
+                    {
+                        <option value="14">14 sản phẩm</option>
+                    }
+
+                    @if (currentPageSize == 21)
+                    {
+                        <option value="21" selected>21 sản phẩm</option>
+                    }
+                    else
+                    {
+                        <option value="21">21 sản phẩm</option>
+                    }
+                    @if (currentPageSize == 50)
+                    {
+                        <option value="50" selected>50 sản phẩm</option>
+                    }
+                    else
+                    {
+                        <option value="50">50 sản phẩm</option>
+                    }
+                </select>
+            </div>
+
+            <!-- Nút xóa bộ lọc -->
+            <div class="col-12">
+                <a asp-action="Index" class="btn btn-secondary">
+                    <i class="fas fa-times"></i> Xóa bộ lọc
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Thông tin kết quả -->
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <a id="btnAddMonan" class="btn btn-success">
+            <i class="fas fa-plus"></i> Thêm món ăn
+        </a>
+    </div>
+    <div>
+        @if (!string.IsNullOrEmpty(ViewBag.SearchTerm as string))
+        {
+            <div class="alert alert-info mb-0">
+                <strong>Kết quả tìm kiếm cho:</strong> "@ViewBag.SearchTerm"
+                <span class="badge bg-secondary">@ViewBag.TotalProducts kết quả</span>
+            </div>
+        }
+        else
+        {
+            <span class="text-muted">
+                Tổng cộng: <strong>@ViewBag.TotalProducts</strong> sản phẩm
+                (Trang @ViewBag.CurrentPage/@ViewBag.TotalPages)
+            </span>
+        }
+    </div>
+</div>
+
+<div id="monanModalContainer"></div>
+
+<!-- Bảng danh sách sản phẩm -->
+<div class="table-responsive">
+    <table class="table table-bordered table-order">
+        <thead class="table-dark">
+            <tr>
+                <th>Mã SP</th>
+                <th>Tên món</th>
+                <th>Loại món</th>
+                <th>Ảnh</th>
+                <th>Giá</th>
+                <th>Trạng thái</th>
+                <th style ="width:fit-content">Thao tác</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null && Model.Any())
+            {
+                foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.Idmonan</td>
+                        <td>@item.Tenmonan</td>
+                        <td>@item.Tenloaimonan</td>
+                        <td>
+                            <img src="~/css/img/@item.Anhmonan" width="60" height="60"
+                                 class="rounded object-fit-cover" />
+                        </td>
+                        <td>@item.Giamonan.ToString("N0") đ</td>
+                        <td style="text-align:center">
+                            <span>
+                                @item.Trangthaiman
+                            </span>
+                        </td>
+                        <td>
+                            <div class="btn-group" role="group">
+                                <a asp-action="Detail" asp-route-id="@item.Idmonan"
+                                   class="btn btn-info btn-sm" title="Xem chi tiết">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <button class="btn btn-primary btn-sm btn-edit-monan"
+                                        data-id="@item.Idmonan" title="Sửa">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="7" class="text-center">
+                        <div class="py-4">
+                            <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+                            <p class="text-muted">Không có sản phẩm nào để hiển thị.</p>
+                            @if (TempData["Message"] != null)
+                            {
+                                <p class="text-warning">@TempData["Message"]</p>
+                            }
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<!-- Phần phân trang -->
+@if (ViewBag.TotalPages != null && (int)ViewBag.TotalPages > 1)
+{
+    <div class="d-flex justify-content-center mt-4">
+        <nav aria-label="Phân trang sản phẩm">
+            <ul class="pagination pagination-lg">
+                <!-- Nút Previous -->
+                @if (ViewBag.CurrentPage > 1)
+                {
+                    <li class="page-item">
+                        <a class="page-link" asp-action="Index"
+                           asp-route-page="@(ViewBag.CurrentPage - 1)"
+                           asp-route-categoryId="@ViewBag.SelectedCategory"
+                           asp-route-searchTerm="@ViewBag.SearchTerm"
+                           asp-route-pageSize="@ViewBag.PageSize">
+                            <i class="fas fa-chevron-left"></i>
+                        </a>
+                    </li>
+                }
+
+                <!-- Các trang -->
+                @{
+                    int currentPage = ViewBag.CurrentPage;
+                    int totalPages = ViewBag.TotalPages;
+                    int startPage = Math.Max(1, currentPage - 2);
+                    int endPage = Math.Min(totalPages, currentPage + 2);
+                }
+
+                @if (startPage > 1)
+                {
+                    <li class="page-item">
+                        <a class="page-link" asp-action="Index"
+                           asp-route-page="1"
+                           asp-route-categoryId="@ViewBag.SelectedCategory"
+                           asp-route-searchTerm="@ViewBag.SearchTerm"
+                           asp-route-pageSize="@ViewBag.PageSize">1</a>
+                    </li>
+                    @if (startPage > 2)
+                    {
+                        <li class="page-item disabled">
+                            <span class="page-link">...</span>
+                        </li>
+                    }
+                }
+
+                @for (int i = startPage; i <= endPage; i++)
+                {
+                    <li class="page-item @(ViewBag.CurrentPage == i ? "active" : "")">
+                        <a class="page-link" asp-action="Index"
+                           asp-route-page="@i"
+                           asp-route-categoryId="@ViewBag.SelectedCategory"
+                           asp-route-searchTerm="@ViewBag.SearchTerm"
+                           asp-route-pageSize="@ViewBag.PageSize">@i</a>
+                    </li>
+                }
+
+                @if (endPage < totalPages)
+                {
+                    @if (endPage < totalPages - 1)
+                    {
+                        <li class="page-item disabled">
+                            <span class="page-link">...</span>
+                        </li>
+                    }
+                    <li class="page-item">
+                        <a class="page-link" asp-action="Index"
+                           asp-route-page="@totalPages"
+                           asp-route-categoryId="@ViewBag.SelectedCategory"
+                           asp-route-searchTerm="@ViewBag.SearchTerm"
+                           asp-route-pageSize="@ViewBag.PageSize">@totalPages</a>
+                    </li>
+                }
+
+                <!-- Nút Next -->
+                @if (ViewBag.CurrentPage < ViewBag.TotalPages)
+                {
+                    <li class="page-item">
+                        <a class="page-link" asp-action="Index"
+                           asp-route-page="@(ViewBag.CurrentPage + 1)"
+                           asp-route-categoryId="@ViewBag.SelectedCategory"
+                           asp-route-searchTerm="@ViewBag.SearchTerm"
+                           asp-route-pageSize="@ViewBag.PageSize">
+                            <i class="fas fa-chevron-right"></i>
+                        </a>
+                    </li>
+                }
+            </ul>
+        </nav>
+    </div>
+}
+
+<script src="~/js/manageproduct.js"></script>
+<script src="~/js/admin-search-product.js"></script>
+<link href="~/css/product_admin.css" rel="stylesheet" />

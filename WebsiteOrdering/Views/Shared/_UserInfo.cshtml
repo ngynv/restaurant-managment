@@ -1,0 +1,93 @@
+﻿@model WebsiteOrdering.ViewModels.UserCheckoutInfoViewModel
+<link rel="stylesheet" href="~/css/style.css" />
+<div class="checkout-info-card">
+    <div class="checkout-info-card-body">
+        <h5 class="checkout-info-card-title">Thông tin đặt hàng</h5>
+
+        <div class="checkout-info-mb-2">
+            <strong>Tên người nhận *</strong>
+            <input asp-for="FullName" class="checkout-info-input checkout-info-input-sm" placeholder="Nhập họ tên" />
+            <span asp-validation-for="FullName" class="text-danger"></span>
+        </div>
+
+        <div class="checkout-info-mb-2">
+            <strong>Số điện thoại *</strong>
+            <input asp-for="PhoneNumber" class="checkout-info-input checkout-info-input-sm" placeholder="Nhập số điện thoại" />
+            <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+
+        </div>
+
+        <div class="checkout-info-mb-2">
+            @if (Model.DeliveryMethod == "delivery")
+            {
+                <input type="hidden" asp-for="DeliveryMethod" />
+                <strong>Địa chỉ giao hàng *</strong>
+                <input asp-for="Address" class="checkout-info-input" readonly />
+                <span asp-validation-for="Address" class="text-danger"></span>
+                <div class="checkout-info-row">
+                    <div class="checkout-info-half">
+                        <strong>Giao hàng từ</strong>
+                        <input type="text" class="checkout-info-input" value="@Model.BranchName" readonly />
+                        <input type="hidden" asp-for="BranchName" />
+                        <input type="hidden" asp-for="BranchId" />
+                    </div>
+                    <div class="checkout-info-half">
+                        <strong>Số km</strong>
+                        <input type="text" class="checkout-info-input" value="@Model.DistanceKm km" readonly />
+                        <input type="hidden" asp-for="DistanceKm" />
+                    </div>
+                </div>
+
+                <div class="checkout-info-full">
+                    <strong>Thời gian giao hàng dự kiến</strong>
+                    <input type="text" class="checkout-info-input" value="@Model.EstimatedMinutes phút" readonly />
+                    <input type="hidden" asp-for="EstimatedMinutes" />
+                </div>
+            }
+            else
+            {
+                <input type="hidden" asp-for="DeliveryMethod" />
+                <strong>Nhận hàng tại cửa hàng</strong>
+                <input asp-for="BranchName" class="checkout-info-input" readonly />
+                <input type="hidden" asp-for="BranchName" />
+                <input type="hidden" asp-for="BranchId" />
+                <div class="checkout-info-row">
+                    <div class="checkout-info-half">
+                        <strong>Khoảng cách</strong>
+                        <input type="text" class="checkout-info-input" value="@Model.DistanceKm km" readonly />
+                        <input type="hidden" asp-for="DistanceKm" />
+                    </div>
+                    <div class="checkout-info-half">
+                        <strong>Thời gian đi dự kiến</strong>
+                        <input type="text" class="checkout-info-input" value="@Model.EstimatedMinutes phút" readonly />
+                        <input type="hidden" asp-for="EstimatedMinutes" />
+                    </div>
+                </div>
+            }
+
+            <button type="button" class="checkout-info-btn"
+                    onclick="location.href='@Url.Action("Index", "Location")'">
+                Thay đổi địa chỉ
+            </button>
+        </div>
+
+        <div class="checkout-info-form-group checkout-info-mb-3">
+            <strong>Phương thức thanh toán *</strong>
+            <div class="checkout-info-mt-2">
+                <div class="checkout-info-form-check">
+                    <input class="checkout-info-form-check-input" type="radio" asp-for="PaymentInfo" value="COD" id="paymentCOD" />
+                    <label class="checkout-info-form-check-label" for="paymentCOD">
+                        Thanh toán khi nhận hàng
+                    </label>
+                </div>
+                <div class="checkout-info-form-check">
+                    <input class="checkout-info-form-check-input" type="radio" asp-for="PaymentInfo" value="VNPay" id="paymentVNPay" />
+                    <label class="checkout-info-form-check-label" for="paymentVNPay">
+                        Thanh toán qua VNPay
+                    </label>
+                </div>
+                <span asp-validation-for="PaymentInfo" class="text-danger"></span>
+            </div>
+        </div>
+    </div>
+</div>

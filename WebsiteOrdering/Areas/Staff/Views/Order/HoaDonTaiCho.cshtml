@@ -1,0 +1,105 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@model WebsiteOrdering.Areas.Staff.ViewModels.HoaDonThanhToanViewModel
+
+<h3>Thông tin hóa đơn</h3>
+<p><b>Khách:</b> @Model.Datban.Tenngdat (@Model.Datban.Sđtngdat)</p>
+<p><b>Số người:</b> @Model.Datban.Songuoidat</p>
+<p><b>Chi nhánh:</b> @Model.Datban.IdchinhanhNavigation.Tencnhanh</p>
+<p><b>Địa chỉ:</b> @Model.Datban.IdchinhanhNavigation.Diachicn</p>
+<p><b>Bàn:</b> @Model.Chitietdatban.IdbanNavigation.Tenban</p>
+<p><b>Khu vực:</b> @Model.Chitietdatban.IdbanNavigation.Khuvuc</p>
+<p><b>Ngày ăn:</b> @Model.Datban.Ngaydat.ToString("dd/MM/yyyy")</p>
+<p><b>Giờ vào:</b> @Model.Chitietdatban.Giovao</p>
+<p><b>Giờ ra:</b> @TimeOnly.FromDateTime(DateTime.Now)</p>
+
+<h4>Danh sách món</h4>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Tên món</th>
+            <th>Size</th>
+            <th>Số lượng</th>
+            <th>Giá</th>
+            <th>Tổng</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.OrderSession.ChiTietMonAn)
+        {
+            <tr>
+                <td>
+                    @item.TENSANPHAM
+                    @if (!string.IsNullOrEmpty(item.IDMMONAN2))
+                    {
+                        <div><i>Ghép với: @item.TENSANPHAM2</i></div>
+                    }
+                    @if (!string.IsNullOrEmpty(item.GhiChu))
+                    {
+                        <div><i>Ghi chú: @item.GhiChu</i></div>
+                    }
+                    @if (item.Topping != null && item.Topping.Count > 0)
+                    {
+                        <div><i>Topping: @string.Join(", ", item.Topping.Select(t => t.Tentopping))</i></div>
+                    }
+                    @if (!string.IsNullOrEmpty(item.DeBanh))
+                    {
+                        <div><i>Đế bánh: @item.DeBanh</i></div>
+                    }
+                </td>
+                <td>@item.TenSize</td>
+                <td>@item.SoLuong</td>
+                <td>@item.GiaCoBan.ToString("N0") đ</td>
+                <td>@item.TongTien.ToString("N0") đ</td>
+            </tr>
+        }
+
+    </tbody>
+</table>
+<p><b>Tổng tiền:</b> @Model.OrderSession.TongTien.ToString("N0") đ</p>
+
+<form asp-area="Staff" asp-controller="Order" asp-action="ThanhToanTaiCho" method="post">
+    <input type="hidden" name="idDatBan" value="@Model.OrderSession.IdDatBan" />
+    <input type="hidden" name="idchhinhanh" value="@Model.Datban.Idchinhanh" />
+    <label>Phương thức thanh toán</label>
+    <select name="PhuongThucThanhToan" id="phuongThucThanhToan" class="form-select" onchange="toggleTienMat()">
+        <option value="TienMat">Tiền mặt</option>
+        <option value="ChuyenKhoan">Chuyển khoản</option>
+    </select>
+
+    <div id="tienMatDiv" style="display:none;">
+        <label>Tiền khách đưa</label>
+        <input type="number" name="TienKhachDua" id="TienKhachDua" class="form-control" oninput="tinhTienThua()" />
+        <p id="TienThuaText" style="color: green; margin-top: 5px;"></p>
+    </div>
+
+
+    <button type="submit" class="btn btn-success mt-3">Xác nhận thanh toán</button>
+</form>
+<script>
+    function toggleTienMat() {
+        var val = document.getElementById("phuongThucThanhToan").value;
+        document.getElementById("tienMatDiv").style.display = val === "TienMat" ? "block" : "none";
+    }
+
+    function tinhTienThua() {
+        var tongTien = @Model.OrderSession.TongTien;
+        var tienKhach = parseInt(document.getElementById("TienKhachDua").value || 0);
+        var tienThua = tienKhach - tongTien;
+        var tienThuaText = document.getElementById("TienThuaText");
+        if (tienKhach > 0) {
+            if (tienThua >= 0) {
+                tienThuaText.innerText = "Tiền thừa: " + tienThua.toLocaleString() + " đ";
+            } else {
+                tienThuaText.innerText = "Khách đưa chưa đủ!";
+            }
+        } else {
+            tienThuaText.innerText = "";
+        }
+    }
+
+    window.onload = toggleTienMat;
+</script>
+

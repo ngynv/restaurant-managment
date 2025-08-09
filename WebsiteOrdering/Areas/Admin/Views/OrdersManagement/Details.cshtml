@@ -1,0 +1,80 @@
+﻿@using WebsiteOrdering.Enums
+@model WebsiteOrdering.Models.Donhang
+@{
+    ViewData["Title"] = "Chi tiết đơn hàng";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+
+}
+<h2>Chi tiết đơn hàng: @Model.Iddonhang</h2>
+
+<p><strong>Khách hàng:</strong> @Model.Tenkh</p>
+<p><strong>Địa chỉ:</strong> @Model.Diachidh</p>
+<p><strong>Ngày đặt:</strong> @Model.Ngaydat.ToString("dd/MM/yyyy HH:mm")</p>
+<p><strong>Trạng thái:</strong> @Model.Trangthai.ToFriendly()</p>
+
+<h3>Danh sách món ăn</h3>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Sản phẩm</th>
+            <th>Ghép với</th>
+            <th>Size</th>
+            <th>Đế bánh</th>
+            <th>Kiểu</th>
+            <th>Số lượng</th>
+            <th>Đơn giá</th>
+            <th>Topping</th>
+            <th>Ghi chú</th>
+            <th>Tổng tiền</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Chitietdonhangs)
+        {
+            <tr>
+                <td>@item.IdmonanNavigation.Tenmonan</td>
+                <td>@(item.Idmonan2Navigation?.Tenmonan ?? "-")</td>
+                <td>@item.IdsizeNavigation?.Tensize</td>
+                <td>@item.IddebanhNavigation?.Tendebanh</td>
+                <td>@item.Kieupizza</td>
+                <td>@item.Soluong</td>
+                <td>@item.Dongia.ToString("N0")</td>
+                <td>
+                    @if (item.Chitiettoppings != null && item.Chitiettoppings.Any())
+                    {
+                        <ul class="mb-0">
+                            @foreach (var tp in item.Chitiettoppings)
+                            {
+                                <li>@tp.IdtoppingNavigation.Tentopping - @tp.IdtoppingNavigation.Giatopping.ToString("N0") đ</li>
+                            }
+                        </ul>
+                    }
+                    else
+                    {
+                        <span>-</span>
+                    }
+                </td>
+                <td>@(item.Ghichu ?? "-")</td>
+                <td>@item.Tongtiendh.ToString("N0")</td>
+            </tr>
+        }
+    </tbody>
+</table>
+<h4>Cập nhật trạng thái</h4>
+<form asp-action="UpdateStatus" asp-route-id="@Model.Iddonhang" method="post" class="row g-2">
+    <div class="col-md-6">
+        <select name="newStatus" class="form-select">
+            @foreach (var option in (List<TrangThai>)ViewBag.AvailableStatuses)
+            {
+                <option value="@option" selected="@(option == Model.Trangthai ? "selected" : null)">
+                    @option.ToFriendly()
+                </option>
+            }
+        </select>
+    </div>
+    <div class="col-md-3">
+        <button type="submit" class="btn btn-success" @(Model.Trangthai == TrangThai.Cancelled || Model.Trangthai == TrangThai.Completed ? "disabled" : "")>Cập nhật trạng thái</button>
+    </div>
+</form>
+<p><strong>Tiền ship:</strong> @(Model.Tienship?.ToString("N0") ?? "0") đ</p>
+<p><strong>Tổng tiền:</strong> @Model.Tongtien.ToString("N0") đ</p>

@@ -1,0 +1,95 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>0290016e-dd86-453e-861e-1ff458fc1944</UserSecretsId>
+  </PropertyGroup>
+	<ItemGroup>
+		<PackageReference Include="Lucene.Net" Version="4.8.0-beta00016" />
+		<PackageReference Include="Lucene.Net.Analysis.Common" Version="4.8.0-beta00016" />
+		<PackageReference Include="Lucene.Net.QueryParser" Version="4.8.0-beta00016" />
+		<PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="11.1.0" />
+		<PackageReference Include="MailKit" Version="4.12.1" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="8.0.16" />
+		<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.16" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.16">
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+			<PrivateAssets>all</PrivateAssets>
+		</PackageReference>
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="8.0.16" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.16" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.16">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.6" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Console" Version="9.0.6" />
+		<PackageReference Include="System.Data.SqlClient" Version="4.9.0" />
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Folder Include="Views\Cart\" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<UpToDateCheckInput Remove="Views\Shared\_CartCount.cshtml" />
+	</ItemGroup>
+	<ItemGroup>
+		<_ContentIncludedByDefault Remove="Views\Shared\_CartCount.cshtml" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="Views\Shared\_CartCount.cshtml" />
+	</ItemGroup>
+  <ItemGroup>
+    <Content Remove="wwwroot\css\svg\icon_minus.svg" />
+    <Content Remove="wwwroot\js\IndexBooking.js" />
+  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="11.1.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="8.0.16" />
+		<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.16" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.16">
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+			<PrivateAssets>all</PrivateAssets>
+		</PackageReference>
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="8.0.16" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.16" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.16">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.6" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Console" Version="9.0.6" />
+		<PackageReference Include="System.Data.SqlClient" Version="4.9.0" />
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Folder Include="Views\Cart\" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<UpToDateCheckInput Remove="Views\Shared\_CartCount.cshtml" />
+	</ItemGroup>
+	<ItemGroup>
+		<_ContentIncludedByDefault Remove="Views\Shared\_CartCount.cshtml" />
+		<_ContentIncludedByDefault Remove="wwwroot\js\IndexBooking.js" />
+	</ItemGroup>
+	<ItemGroup>
+	  <Content Include="Templates\EmailXacNhanDatBan.html" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="Views\Shared\_CartCount.cshtml" />
+		<None Include="wwwroot\css\svg\icon_minus.svg" />
+		<None Include="wwwroot\js\IndexBooking.js" />
+	</ItemGroup>
+	<ItemGroup>
+	  <Content Update="Areas\Staff\Views\BookingStaff\DetailDonDatBan.cshtml">
+	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+	    <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+	  </Content>
+	</ItemGroup>
+</Project>

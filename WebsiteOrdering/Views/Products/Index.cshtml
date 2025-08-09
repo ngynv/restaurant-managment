@@ -1,0 +1,521 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@using Azure.Core
+@using WebsiteOrdering.Models
+@using WebsiteOrdering.ViewModels
+@model List<Monan>
+@{
+    ViewData["Title"] = "Danh sách sản phẩm";
+    Layout = "_Layout";
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link href="~/css/style.css" rel="stylesheet" />
+    <script src="~/js/site.js"></script>
+}
+<body>
+    <section class="banner-tdon-online">
+        <video autoplay muted loop playsinline class="bg-video-tdon-online">
+            <source src="~/css/videos/banner_tdon_online.mp4" type="video/mp4">
+            Trình duyệt của bạn không hỗ trợ video nền.
+        </video>
+        <div class="overlay-tdon-online">
+            <h1>ĐẶT MÓN</h1>
+        </div>
+    </section>
+    <section class="text-center mb-4">
+        <form method="get" asp-action="Index" class="category-nav">
+            <!-- Nút "Tất cả các loại" -->
+            <button type="submit" name="categoryId" value=""
+                    class="btn @(ViewBag.SelectedCategory == null ? "active" : "")">
+                Tất cả các món
+            </button>
+
+            @{
+                // Lấy tất cả categories
+                var allCategories = (List<Loaimonan>)ViewBag.Categories;
+
+                // Chỉ lấy các category cha (không có IDLOAIMONANCHA hoặc IDLOAIMONANCHA = null)
+                var parentCategories = allCategories.Where(c => string.IsNullOrEmpty(c.IdloaimanCha)).ToList();
+            }
+
+            @foreach (var parentCategory in parentCategories)
+            {
+                // Kiểm tra xem category cha này có được chọn không
+                var isParentSelected = ViewBag.SelectedCategory?.ToString() == parentCategory.Idloaimonan;
+
+                // Tìm các category con trực tiếp của category cha này
+                //  var directChildren = allCategories.Where(c => c.IdloaimanCha == parentCategory.IdloaimanCha).ToList();
+                var directChildren = allCategories.Where(c => c.IdloaimanCha == parentCategory.Idloaimonan).ToList();
+
+                if (directChildren.Any())
+                {
+                    <!-- Category cha có con - tạo dropdown -->
+                    <div class="category-dropdown">
+                        @* <button type="submit" name="categoryId" value="@parentCategory.Idloaimonan"
+                class="btn @(isParentSelected ? "active" : "") no-arrow">
+                @parentCategory.Tenloaimonan
+                </button> *@
+
+                        <button type="submit" name="categoryId" value="@parentCategory.Idloaimonan"
+                                class="btn @(isParentSelected || directChildren.Any(c => ViewBag.SelectedCategory?.ToString() == c.Idloaimonan) ? "active-category" : "")">
+                            @parentCategory.Tenloaimonan
+                        </button>
+
+                        <div class="category-dropdown-menu">
+                            @foreach (var childCategory in directChildren)
+                            {
+                                var isChildSelected = ViewBag.SelectedCategory?.ToString() == childCategory.Idloaimonan;
+
+                                // Tìm các category con của category con này (cháu)
+                                var grandChildren = allCategories.Where(c => c.IdloaimanCha == childCategory.Idloaimonan).ToList();
+
+                                if (grandChildren.Any())
+                                {
+                                    <!-- Category con có con - tạo submenu -->
+                                    <div class="category-dropdown-submenu">
+                                        <button type="submit" name="categoryId" value="@childCategory.Idloaimonan"
+                                                class="category-dropdown-item @(isChildSelected ? "active" : "")">
+                                            @childCategory.Tenloaimonan
+                                        </button>
+
+                                        @* <div class="category-dropdown-menu">
+                        @foreach (var grandChild in grandChildren)
+                        {
+                        var isGrandChildSelected = ViewBag.SelectedCategory?.ToString() == grandChild.Idloaimonan;
+
+                        <button type="submit" name="categoryId" value="@grandChild.Idloaimonan"
+                        class="category-dropdown-item @(isGrandChildSelected ? "active" : "")">
+                        @grandChild.Tenloaimonan
+                        </button>
+                        }
+                        </div> *@
+                                    </div>
+                                }
+                                else
+                                {
+                                    <!-- Category con không có con -->
+                                    <button type="submit" name="categoryId" value="@childCategory.Idloaimonan"
+                                            class="category-dropdown-item @(isChildSelected ? "active" : "")">
+                                        @childCategory.Tenloaimonan
+                                    </button>
+                                }
+                            }
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <!-- Category cha không có con - nút bình thường -->
+                    @* <button type="submit" name="categoryId" value="@parentCategory.Idloaimonan"
+            class="btn @(isParentSelected ? "active" : "")">
+            @parentCategory.Tenloaimonan
+            </button> *@
+                    <button type="submit" name="categoryId" value="@parentCategory.Idloaimonan"
+                            class="btn @(isParentSelected ? "active" : "")">
+                        @parentCategory.Tenloaimonan
+                    </button>
+                }
+            }
+        </form>
+    </section>
+
+    @* Phần hiển thị tên category được chọn *@
+    @{
+
+        // string categoryName = "Danh sách sản phẩm";
+        var groupName = Context.Request.Query["groupName"].ToString();
+        string categoryName = !string.IsNullOrEmpty(groupName) ? groupName : "Danh sách sản phẩm";
+        var selectedCategoryId = ViewBag.SelectedCategory as string;
+        var categories = (List<Loaimonan>)ViewBag.Categories;
+
+        if (!string.IsNullOrEmpty(selectedCategoryId))
+        {
+            var selectedCategory = categories.FirstOrDefault(c => c.Idloaimonan == selectedCategoryId);
+            if (selectedCategory != null)
+            {
+                categoryName = selectedCategory.Tenloaimonan;
+            }
+        }
+    }
+
+    <!-- Phần hiển thị sản phẩm -->
+    <!-- Giao diện sản phẩm + giỏ hàng -->
+    <section class="product-container product-cart-layout">
+        <div class="product-row">
+            <!-- Cột trái: Danh sách sản phẩm -->
+            <div class="product-col-left">
+                <div class="section-heading-tdon-online">
+                    <span class="svg-icon-tdon-online">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="47" height="27" viewBox="0 0 47 27" fill="none">
+                            <rect x="2.80784" y="14" width="14.8993" height="14.8993" transform="rotate(-45 2.80784 14)" stroke="#E0B37F" stroke-width="3" />
+                            <rect x="23.8078" y="13" width="14.8993" height="14.8993" transform="rotate(-45 23.8078 13)" stroke="#E0B37F" stroke-width="3" />
+                        </svg>
+                    </span>
+                    <h2 class="product-heading-tdon-online">@categoryName</h2>
+                    <span class="svg-icon-tdon-online">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="47" height="27" viewBox="0 0 47 27" fill="none">
+                            <rect x="2.80784" y="14" width="14.8993" height="14.8993" transform="rotate(-45 2.80784 14)" stroke="#E0B37F" stroke-width="3" />
+                            <rect x="23.8078" y="13" width="14.8993" height="14.8993" transform="rotate(-45 23.8078 13)" stroke="#E0B37F" stroke-width="3" />
+                        </svg>
+                    </span>
+                </div>
+
+                @if (Model != null && Model.Any())
+                {
+                    <form method="get" asp-controller="Products" asp-action="Index" class="search-form-custom">
+                        <input type="hidden" name="categoryId" value="@ViewBag.SelectedCategory" />
+                        <div class="search-wrapper">
+                            <input type="text"
+                                   name="searchTerm"
+                                   class="search-input"
+                                   placeholder="Nhập tên món ăn cần tìm..."
+                                   value="@ViewBag.SearchTerm"
+                                   id="searchInput"
+                                   autocomplete="off" />
+
+                            <button class="search-clear-button" type="button" onclick="clearSearch()" title="Xoá nội dung">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                    <path d="M10 0C4.47 0 0 4.47 0 10C0 15.53 4.47 20 10 20C15.53 20 20 15.53 20 10C20 4.47 15.53 0 10 0ZM14.3 14.3C13.91 14.69 13.28 14.69 12.89 14.3L10 11.41L7.11 14.3C6.72 14.69 6.09 14.69 5.7 14.3C5.31 13.91 5.31 13.28 5.7 12.89L8.59 10L5.7 7.11C5.31 6.72 5.31 6.09 5.7 5.7C6.09 5.31 6.72 5.31 7.11 5.7L10 8.59L12.89 5.7C13.28 5.31 13.91 5.31 14.3 5.7C14.69 6.09 14.69 6.72 14.3 7.11L11.41 10L14.3 12.89C14.68 13.27 14.68 13.91 14.3 14.3Z" fill="#E0B37F" />
+                                </svg>
+                            </button>
+
+                            <button class="search-text-button" type="submit">Tìm kiếm</button>
+                        </div>
+                    </form>
+                    <!-- Dropdown gợi ý tìm kiếm -->
+                    <div class="dropdown">
+                        <ul class="dropdown-menu w-100" id="searchSuggestions" style="max-height: 300px; overflow-y: auto;">
+                            <!-- Gợi ý sẽ được thêm bằng JavaScript -->
+                        </ul>
+                    </div>
+                    <!-- Kết quả tìm kiếm -->
+                    @if (!string.IsNullOrEmpty(ViewBag.SearchTerm as string))
+                    {
+                        <div class="alert alert-info">
+                            <strong>Kết quả tìm kiếm cho:</strong> "@ViewBag.SearchTerm"
+                            <span class="badge bg-secondary">@Model.Count kết quả</span>
+                        </div>
+                    }
+                    <div class="product-scroll-area">
+                        <div class="product-grid">
+                            @foreach (var product in Model)
+                            {
+                                <div class="product-card-wrapper">
+                                    <a asp-controller="Products" asp-action="Detail" asp-route-id="@product.Idmonan" name="idmonan" class="product-link">
+                                        <div class="product-card-scaler">
+                                            <div class="product-card">
+                                                <div class="product-content">
+                                                    <div class="product-image-wrapper">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 328 253">
+                                                            <defs>
+                                                                <clipPath id="clip-lom-@product.Idmonan">
+                                                                    <path d="M315.011 0C315.273 6.67175 320.764 12 327.5 12C327.667 12 327.834 11.9948 328 11.9883V240.011C327.834 240.004 327.667 240 327.5 240C320.596 240 315 245.596 315 252.5C315 252.667 315.004 252.834 315.011 253H11.9893C11.9958 252.834 12 252.667 12 252.5C12 245.764 6.67175 240.273 0 240.011V11.9883C6.50586 11.7323 11.7333 6.50587 11.9893 0H315.011Z" />
+                                                                </clipPath>
+                                                            </defs>
+                                                            <g clip-path="url(#clip-lom-@product.Idmonan)">
+                                                                <image class="product-image"
+                                                                       href="@Url.Content("~/css/img/" + product.Anhmonan)"
+                                                                       width="328"
+                                                                       height="253"
+                                                                       preserveAspectRatio="xMinYMid slice" />
+                                                            </g>
+                                                            <image href="~/css/svg/custom_inner_frame_product.svg"
+                                                                   width="328"
+                                                                   height="253"
+                                                                   preserveAspectRatio="none" />
+                                                        </svg>
+                                                    </div>
+
+                                                    <div class="card-body text-center">
+                                                        <h5 class="card-title">@product.Tenmonan</h5>
+                                                        @{
+                                                            var culture = new System.Globalization.CultureInfo("vi-VN");
+                                                            culture.NumberFormat.CurrencySymbol = "";
+                                                            var giaTien = string.Format(culture, "{0:C0}", product.Giamonan).Trim();
+                                                        }
+                                                        <p class="product-price">@giaTien VNĐ</p>
+                                                        <button type="submit" class="buy-button">Chọn mua</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="product-empty">
+                        <p class="text-muted">Không có sản phẩm nào để hiển thị.</p>
+                        @if (TempData["Message"] != null)
+                        {
+                            <p class="text-warning">@TempData["Message"]</p>
+                        }
+                    </div>
+                }
+            </div>
+
+            <!-- Cột phải: Giỏ hàng -->
+            <div class="product-col-right">
+                <div class="cart-wrapper">
+                    <h4 class="cart-title">GIỎ HÀNG</h4>
+                    @{
+                        var cart = ViewBag.CartItems as List<CartItem>;
+                        if (cart != null && cart.Any())
+                        {
+                            <div class="cart-box">
+                                <div class="cart-items-scroll">
+                                    @foreach (var item in cart)
+                                    {
+                                        <div class="cart-item styled-cart-item"
+                                             data-idmonan="@item.IDMONAN"
+                                             data-idmonan2="@item.IDMMONAN2"
+                                             data-size="@item.Size"
+                                             data-debanh="@item.DeBanh"
+                                             data-toppings="@string.Join(",", item.Topping?.Select(t => t.Idtopping) ?? new List<string>())">
+
+                                            <div class="cart-item-top">
+                                                <div class="product-name product-name-full">
+                                                    @if (!string.IsNullOrEmpty(item.TENSANPHAM2))
+                                                    {
+                                                        <text>PIZZA 2 VỊ – @item.TENSANPHAM & @item.TENSANPHAM2</text>
+                                                    }
+                                                    else
+                                                    {
+                                                        <text>@item.TENSANPHAM</text>
+                                                    }
+                                                </div>
+
+
+                                                @* NÚT XOÁ: giữ nguyên giao diện nhưng gói trong form để hoạt động *@
+                                                <form asp-action="DeleteItem" asp-controller="Cart" method="post" class="cart-remove-form">
+                                                    <input type="hidden" name="idmonan" value="@item.IDMONAN" />
+                                                    <input type="hidden" name="idmonan2" value="@item.IDMMONAN2" />
+                                                    <input type="hidden" name="size" value="@item.Size" />
+                                                    <input type="hidden" name="debanh" value="@item.DeBanh" />
+                                                    <input type="hidden" name="ghichu" value="@item.GhiChu" />
+                                                    @foreach (var top in item.Topping ?? new List<WebsiteOrdering.Models.Topping>())
+                                                    {
+                                                        <input type="hidden" name="toppings" value="@top.Idtopping" />
+                                                    }
+                                                    <button type="submit" class="remove-item">×</button>
+                                                </form>
+                                            </div>
+
+                                            <!-- ✅ GỘP NỘI DUNG CHÍNH VÀO ĐÂY -->
+                                            <div class="cart-item-body">
+                                                @if (!string.IsNullOrEmpty(item.Size) || !string.IsNullOrEmpty(item.DeBanh))
+                                                {
+                                                    <div class="cart-small">
+                                                        @if (!string.IsNullOrEmpty(item.Size))
+                                                        {
+                                                            <text>Size: @item.Size</text>
+                                                        }
+                                                        @if (!string.IsNullOrEmpty(item.DeBanh))
+                                                        {
+                                                            <text>@(string.IsNullOrEmpty(item.Size) ? "" : ", ")Đế: @item.DeBanh</text>
+                                                        }
+                                                    </div>
+                                                }
+
+                                                @if (item.Topping != null && item.Topping.Count > 0)
+                                                {
+                                                    <div class="cart-small">
+                                                        Topping: @string.Join(", ", item.Topping.Select(t => t.Tentopping))
+                                                    </div>
+                                                }
+
+                                                @if (!string.IsNullOrEmpty(item.GhiChu))
+                                                {
+                                                    <div class="cart-small cart-note">
+                                                        Ghi chú: @item.GhiChu
+                                                    </div>
+                                                }
+
+                                                <div class="item-price">
+                                                    @string.Format(new System.Globalization.CultureInfo("vi-VN"), "{0:N0}", item.TongTien) VNĐ
+                                                </div>
+
+                                                <!-- Nút chỉnh sửa -->
+                                                <form method="post" asp-controller="Products" asp-action="PrepareEdit" class="edit-form">
+                                                    <input type="hidden" name="id" value="@item.IDMONAN" />
+                                                    <input type="hidden" name="idmonan2" value="@item.IDMMONAN2" />
+                                                    <input type="hidden" name="size" value="@item.Size" />
+                                                    <input type="hidden" name="debanh" value="@item.DeBanh" />
+                                                    <input type="hidden" name="ghichu" value="@item.GhiChu" />
+                                                    <input type="hidden" name="soluong" value="@item.SoLuong" />
+                                                    <input type="hidden" name="edit" value="true" />
+                                                    @foreach (var top in item.Topping ?? new List<WebsiteOrdering.Models.Topping>())
+                                                    {
+                                                        <input type="hidden" name="toppings" value="@top.Idtopping" />
+                                                    }
+                                                    <button type="submit" class="edit-button">[Chỉnh Sửa]</button>
+                                                </form>
+
+                                                @* PHẦN CHỈNH SỬA SỐ LƯỢNG *@
+                                                <form asp-action="UpdateCart" asp-controller="Cart" method="post" class="update-cart-form">
+                                                    <input type="hidden" name="idmonan" value="@item.IDMONAN" />
+                                                    <input type="hidden" name="idmonan2" value="@item.IDMMONAN2" />
+                                                    <input type="hidden" name="size" value="@item.Size" />
+                                                    <input type="hidden" name="debanh" value="@item.DeBanh" />
+                                                    <input type="hidden" name="ghichu" value="@item.GhiChu" />
+                                                    @foreach (var top in item.Topping ?? new List<WebsiteOrdering.Models.Topping>())
+                                                    {
+                                                        <input type="hidden" name="toppings" value="@top.Idtopping" />
+                                                    }
+
+                                                    <div class="quantity-section-custom">
+                                                        <button type="button"
+                                                                onclick="changeQuantity('@item.IDMONAN', '@item.IDMMONAN2', '@item.Size', '@item.DeBanh', [@string.Join(",", item.Topping?.Select(t => "\"" + t.Idtopping + "\"") ?? new List<string>())], false)"
+                                                                class="qty-btn-custom">
+                                                            <img src="~/css/svg/icon_minus.svg" alt="Giảm" />
+                                                        </button>
+
+                                                        <div class="qty-input-wrapper">
+                                                            <input type="text" name="soluong" value="@item.SoLuong" class="qty-input-custom" readonly />
+                                                        </div>
+
+                                                        <button type="button"
+                                                                onclick="changeQuantity('@item.IDMONAN', '@item.IDMMONAN2', '@item.Size', '@item.DeBanh', [@string.Join(",", item.Topping?.Select(t => "\"" + t.Idtopping + "\"") ?? new List<string>())], true)"
+                                                                class="qty-btn-custom">
+                                                            <img src="~/css/svg/icon_plus.svg" alt="Tăng" />
+                                                        </button>
+                                                    </div>
+
+                                                </form>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+
+                                <div class="cart-summary">
+                                    <div class="summary-row">
+                                        <span class="label-text">Tổng tiền</span>
+                                        <span class="amount-text">
+                                            @string.Format(new System.Globalization.CultureInfo("vi-VN"), "{0:N0}", cart.Sum(x => x.TongTien)) VNĐ
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <div class="cart-checkout">
+                                    <a asp-controller="Cart" asp-action="Index" class="checkout-btn">
+                                        <span class="svg-button">
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 485 60" fill="none">
+                                                <path class="bg-fill" d="M466.604 0C466.604 5.52285 474.093 10 483.329 10C483.893 9.99999 484.45 9.98183 485 9.94922V50.0498C484.45 50.0172 483.893 50 483.329 50C474.093 50 466.604 54.4772 466.604 60H16.7236C16.7236 54.4772 9.23627 50.0002 0 50V10C9.23627 9.99985 16.7236 5.52275 16.7236 0H466.604Z" fill="#203F25" />
+                                                <path class="border-fill" d="M466.604 0H467.604V-1H466.604V0ZM483.329 10V11H483.329L483.329 10ZM485 9.94922H486V8.88813L484.941 8.95097L485 9.94922ZM485 50.0498L484.941 51.048L486 51.1109V50.0498H485ZM483.329 50L483.329 49H483.329V50ZM466.604 60V61H467.604V60H466.604ZM16.7236 60H15.7236V61H16.7236V60ZM0 50H-1V51L-1.64826e-05 51L0 50ZM0 10L-1.64836e-05 9L-1 9.00002V10H0ZM16.7236 0V-1H15.7236V0H16.7236ZM466.604 0H465.604C465.604 3.25242 467.804 6.02437 470.99 7.92935C474.196 9.84656 478.561 11 483.329 11V10V9C478.86 9 474.863 7.91487 472.016 6.21279C469.149 4.49848 467.604 2.27043 467.604 0H466.604ZM483.329 10L483.329 11C483.914 11 484.492 10.9811 485.059 10.9475L485 9.94922L484.941 8.95097C484.409 8.98252 483.872 8.99999 483.329 9L483.329 10ZM485 9.94922H484V50.0498H485H486V9.94922H485ZM485 50.0498L485.059 49.0516C484.49 49.0178 483.913 49 483.329 49L483.329 50L483.329 51C483.873 51 484.41 51.0166 484.941 51.048L485 50.0498ZM483.329 50V49C478.561 49 474.196 50.1534 470.99 52.0707C467.804 53.9756 465.604 56.7476 465.604 60H466.604H467.604C467.604 57.7296 469.149 55.5015 472.016 53.7872C474.863 52.0851 478.86 51 483.329 51V50ZM466.604 60V59H16.7236V60V61H466.604V60ZM16.7236 60H17.7236C17.7236 56.7477 15.5245 53.9757 12.3386 52.0708C9.13234 50.1535 4.76763 49.0001 1.64826e-05 49L0 50L-1.64826e-05 51C4.46864 51.0001 8.46574 52.0852 11.3122 53.7873C14.1791 55.5016 15.7236 57.7296 15.7236 60H16.7236ZM0 50H1V10H0H-1V50H0ZM0 10L1.64836e-05 11C4.76763 10.9999 9.13234 9.84645 12.3386 7.92924C15.5245 6.02425 17.7236 3.25234 17.7236 0H16.7236H15.7236C15.7236 2.27042 14.1791 4.49842 11.3122 6.21271C8.46574 7.91477 4.46864 8.99993 -1.64836e-05 9L0 10ZM16.7236 0V1H466.604V0V-1H16.7236V0Z" fill="#E0B37F" />
+                                            </svg>
+                                            <span class="btn-text">
+                                                Thanh toán
+                                            </span>
+                                        </span>
+                                    </a>
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="cart-box">
+                                <div class="cart-empty">
+                                    <div class="cart-icon">
+                                        <img src="~/css/img/icon_cart_empty.png" alt="Giỏ hàng trống">
+                                    </div>
+                                    <p>Chưa có món nào được chọn.</p>
+                                    <a href="#menu" class="svg-button">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 485 60" fill="none">
+                                            <path class="bg-fill" d="M466.604 0C466.604 5.52285 474.093 10 483.329 10C483.893 9.99999 484.45 9.98183 485 9.94922V50.0498C484.45 50.0172 483.893 50 483.329 50C474.093 50 466.604 54.4772 466.604 60H16.7236C16.7236 54.4772 9.23627 50.0002 0 50V10C9.23627 9.99985 16.7236 5.52275 16.7236 0H466.604Z" fill="#203F25" />
+                                            <path class="border-fill" d=" M466.604 0H467.604V-1H466.604V0ZM483.329 10V11H483.329L483.329 10ZM485 9.94922H486V8.88813L484.941 8.95097L485 9.94922ZM485 50.0498L484.941 51.048L486 51.1109V50.0498H485ZM483.329 50L483.329 49H483.329V50ZM466.604 60V61H467.604V60H466.604ZM16.7236 60H15.7236V61H16.7236V60ZM0 50H-1V51L-1.64826e-05 51L0 50ZM0 10L-1.64836e-05 9L-1 9.00002V10H0ZM16.7236 0V-1H15.7236V0H16.7236ZM466.604 0H465.604C465.604 3.25242 467.804 6.02437 470.99 7.92935C474.196 9.84656 478.561 11 483.329 11V10V9C478.86 9 474.863 7.91487 472.016 6.21279C469.149 4.49848 467.604 2.27043 467.604 0H466.604ZM483.329 10L483.329 11C483.914 11 484.492 10.9811 485.059 10.9475L485 9.94922L484.941 8.95097C484.409 8.98252 483.872 8.99999 483.329 9L483.329 10ZM485 9.94922H484V50.0498H485H486V9.94922H485ZM485 50.0498L485.059 49.0516C484.49 49.0178 483.913 49 483.329 49L483.329 50L483.329 51C483.873 51 484.41 51.0166 484.941 51.048L485 50.0498ZM483.329 50V49C478.561 49 474.196 50.1534 470.99 52.0707C467.804 53.9756 465.604 56.7476 465.604 60H466.604H467.604C467.604 57.7296 469.149 55.5015 472.016 53.7872C474.863 52.0851 478.86 51 483.329 51V50ZM466.604 60V59H16.7236V60V61H466.604V60ZM16.7236 60H17.7236C17.7236 56.7477 15.5245 53.9757 12.3386 52.0708C9.13234 50.1535 4.76763 49.0001 1.64826e-05 49L0 50L-1.64826e-05 51C4.46864 51.0001 8.46574 52.0852 11.3122 53.7873C14.1791 55.5016 15.7236 57.7296 15.7236 60H16.7236ZM0 50H1V10H0H-1V50H0ZM0 10L1.64836e-05 11C4.76763 10.9999 9.13234 9.84645 12.3386 7.92924C15.5245 6.02425 17.7236 3.25234 17.7236 0H16.7236H15.7236C15.7236 2.27042 14.1791 4.49842 11.3122 6.21271C8.46574 7.91477 4.46864 8.99993 -1.64836e-05 9L0 10ZM16.7236 0V1H466.604V0V-1H16.7236V0Z" fill="#E0B37F" />
+                                        </svg>
+                                        <span class="btn-text">Hãy bắt đầu chọn món</span>
+                                    </a>
+                                </div>
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </section>
+    @section Scripts {
+        <script>
+            function formatMoney(number) {
+                return number.toLocaleString('vi-VN');
+            }
+
+            function changeQuantity(idmonan, idmonan2, size, debanh, toppings, increase) {
+                const selector = `[data-idmonan='${idmonan}'][data-idmonan2='${idmonan2}'][data-size='${size}'][data-debanh='${debanh}']`;
+                const itemElem = document.querySelector(selector);
+                if (!itemElem) return;
+
+                const input = itemElem.querySelector("input.qty-input-custom");
+                let currentQty = parseInt(input.value);
+                if (isNaN(currentQty)) currentQty = 1;
+
+                const newQty = increase ? currentQty + 1 : currentQty - 1;
+                if (newQty < 1) return;
+
+                const formData = new FormData();
+                formData.append("idmonan", idmonan);
+                formData.append("idmonan2", idmonan2);
+                formData.append("size", size);
+                formData.append("debanh", debanh);
+                formData.append("soluong", newQty);
+                toppings.forEach(t => formData.append("toppings", t));
+                const noteElem = itemElem.querySelector("input.ghichu-input");
+                formData.append("ghichu", noteElem ? noteElem.value : "");
+
+                fetch("/Cart/UpdateCart", {
+                    method: "POST",
+                    body: formData
+                })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success) {
+                            // ✅ Cập nhật input
+                            input.value = newQty;
+
+                            // ✅ Cập nhật thành tiền sản phẩm
+                            const priceElem = itemElem.querySelector(".item-price");
+                            if (priceElem && data.tongTienMoi !== undefined) {
+                                priceElem.textContent = formatMoney(data.tongTienMoi) + ' VNĐ';
+                            }
+
+                            // ✅ Cập nhật tổng tiền giỏ hàng
+                            updateTotalCart();
+                        } else {
+                            alert("Cập nhật thất bại.");
+                        }
+                    })
+                    .catch(err => {
+                        console.error("Lỗi khi gửi yêu cầu:", err);
+                        alert("Lỗi kết nối máy chủ.");
+                    });
+            }
+
+            function updateTotalCart() {
+                let total = 0;
+
+                document.querySelectorAll(".item-price").forEach(elem => {
+                    const raw = elem.textContent.replace(/[^\d]/g, '');
+                    total += parseInt(raw || '0');
+                });
+
+                const totalText = formatMoney(total) + ' VNĐ';
+
+                // ✅ Cập nhật phần "Tổng tiền"
+                const amountText = document.querySelector(".cart-summary .amount-text");
+                if (amountText) {
+                    amountText.textContent = totalText;
+                }
+
+                // // ✅ Cập nhật nút "Thanh toán"
+                // const checkoutBtn = document.querySelector(".cart-checkout .btn-text");
+                // if (checkoutBtn) {
+                //     checkoutBtn.innerHTML = `Thanh toán ${totalText}`;
+                // }
+            }
+        </script>
+    }
+</body>
+<script src="~/js/searchproduct.js"></script>

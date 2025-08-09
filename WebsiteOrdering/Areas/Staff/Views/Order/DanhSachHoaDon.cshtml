@@ -1,0 +1,51 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model List<WebsiteOrdering.Models.Donhang>
+
+@{
+    ViewData["Title"] = "Danh sách hóa đơn";
+}
+
+<h2>Danh sách hóa đơn đã hoàn thành</h2>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["Success"]
+    </div>
+}
+
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Mã đơn</th>
+            <th>Tên khách</th>
+            <th>SĐT</th>
+            <th>Số người</th>
+            <th>Chi nhánh</th>
+            <th>Ngày đặt</th>
+            <th>Tổng tiền</th>
+            <th>Phương thức thanh toán</th>
+            <th>Trạng thái</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Iddonhang</td>
+                <td>@item.Tenkh</td>
+                <td>@item.Sdtkh</td>
+                <td>@item.Songuoi</td>
+                <td>@item.IdchinhanhNavigation?.Tencnhanh</td>
+                <td>@item.Ngaydat.ToString("dd/MM/yyyy HH:mm")</td>
+                <td>@item.Tongtien.ToString("N0") đ</td>
+                <td>@item.Ptttoan</td>
+                <td>
+                    <span class="badge bg-success">@item.Trangthai</span>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

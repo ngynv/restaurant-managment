@@ -1,0 +1,9 @@
+﻿@{
+    ViewData["Title"] = "Xác nhận email";
+}
+
+<div class="container mt-5">
+    <div class="alert @(ViewBag.ConfirmEmailMessage.ToString().Contains("✅") ? "alert-success" : "alert-danger")">
+        @ViewBag.ConfirmEmailMessage
+    </div>
+</div>

@@ -1,0 +1,23 @@
+﻿@{
+    ViewData["Title"] = "Céleste Élysée - Đặt món";
+}
+<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+<link rel="stylesheet" href="~/css/style.css" asp-append-version="true" />
+<div class="layout-guide">
+    <div class="order-type-container">
+        <div class="options-wrapper">
+            <h1>Bạn muốn đặt món như thế nào?</h1>
+            <h2>Vui lòng chọn một hình thức để tiếp tục:</h2>
+            <div class="order-option">
+                <a asp-controller="Location" asp-action="Index" asp-route-type="delivery" class="btn-delivery-type order-type-btn">
+                    <img src="/images/location/delivery.png" alt="delivery" class="order-type-icon" />
+                    <span>Giao hàng tận nơi</span>
+                </a>
+                <a asp-controller="Location" asp-action="Index" asp-route-type="pickup" class="btn-pickup-type order-type-btn ">
+                    <img src="/images/location/pickup.png" alt="pickup" class="order-type-icon" />
+                    <span>Đặt hàng đến lấy</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

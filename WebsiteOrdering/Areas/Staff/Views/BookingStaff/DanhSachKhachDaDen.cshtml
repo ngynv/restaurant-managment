@@ -1,0 +1,101 @@
+﻿@using WebsiteOrdering.Enums
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@model List<WebsiteOrdering.Models.Datban>
+
+@{
+    ViewData["Title"] = "Danh sách khách đã đến";
+
+    Layout = "~/Areas/Staff/Views/Shared/_LayoutStaff.cshtml";
+
+
+}
+<div class="content-title-for-here">
+    <h2>Danh sách khách đã đến</h2>
+</div>
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["Error"]
+    </div>
+}
+
+<table class="table table-bordered table-order">
+    <thead>
+        <tr>
+            <th>Mã đơn </th>
+            <th>Tên khách</th>
+            <th>Email</th>
+            <th>SĐT</th>
+            <th>Chi nhánh</th>
+            <th>Bàn & giờ thực tế</th>
+            <th>Ngày đặt</th>
+            <th>Giờ dự kiến</th>
+            <th>Thao tác</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Iddatban</td>
+                <td>@(item.Tenngdat ?? item.Nguoidung?.FullName)</td>
+                <td>@item.Nguoidung?.Email</td>
+                <td>@item.Nguoidung?.PhoneNumber</td>
+                <td>@item.IdchinhanhNavigation?.Tencnhanh</td>
+                <td>
+                    @foreach (var ct in item.Chitietdatbans)
+                    {
+                        <div>
+                            <strong>@ct.IdbanNavigation?.Tenban</strong><br />
+                            Vào: @ct.Giovao.ToString("HH:mm") <br />
+                            Ra: @(ct.Giora != default ? ct.Giora.ToString("HH:mm") : "--") <br />
+                            <hr />
+                        </div>
+                    }
+                </td>
+                <td>@item.Ngaydat.ToString("dd/MM/yyyy")</td>
+                <td>@item.Giobatdau - @item.Gioketthuc</td>
+                <td>
+
+                    @if (item.Trangthaidatban == TrangThai.Came)
+                    {
+                        <form asp-area="Staff" asp-controller="Order" asp-action="TaoDonHangTaiCho" method="post" style="display:inline;">
+                            <input type="hidden" name="idDatBan" value="@item.Iddatban" />
+                            <button type="submit" class="btn btn-primary btn-sm" onclick="return confirm('Bạn chắc chắn muốn tạo đơn tại chỗ?');">
+                                Tạo đơn tại chỗ
+                            </button>
+                        </form>
+                    }
+                    else if (item.Trangthaidatban == TrangThai.Eating)
+                    {
+                        <form asp-area="Staff" asp-controller="Order" asp-action="XemHoaDonDatBan" asp-route-idDatBan="@item.Iddatban"  style="display:inline;">
+                            <button type="submit" class="btn btn-info btn-sm">
+                                Xem hóa đơn
+                            </button>
+                        </form>
+                        <a asp-area="Staff" asp-controller="Order" asp-action="Index" asp-route-idDatBan="@item.Iddatban" class="btn btn-info">Xem hóa đơn</a>
+
+
+                    }
+                    else if (item.Trangthaidatban == TrangThai.Ordered)
+                    {
+                        @* <form asp-area="Staff" asp-controller="Order" asp-action="Index" asp-route-idDatBan="@item.Iddatban" method="get" style="display:inline;"> *@
+                        @*     <button type="submit" class="btn btn-info btn-sm"> *@
+                        @*         Xem hóa đơn *@
+                        @*     </button> *@
+                        @* </form> *@
+                        <a asp-area="Staff" asp-controller="Order" asp-action="Index" asp-route-idDatBan="@item.Iddatban" class="btn btn-info">Xem hóa đơn</a>
+
+                        <form asp-area="Staff" asp-controller="Order" asp-action="ChuanBiThanhToan" method="post" style="display:inline;">
+                            <input type="hidden" name="idDatBan" value="@item.Iddatban" />
+                            <button type="submit" class="btn btn-info btn-sm">
+                                Thanh toán
+                            </button>
+                        </form>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

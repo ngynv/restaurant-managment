@@ -1,0 +1,23 @@
+﻿@model List<SelectListItem>
+@{
+    var selected = ViewBag.SelectedBranchId as string;
+    var showLabel = ViewBag.ShowLabel as bool? ?? true;
+}
+
+<div class="form-group">
+    @if (showLabel)
+    {
+        <label for="BranchId">
+            <i class="fas fa-store"></i> Chi nhánh:
+        </label>
+    }
+    <select id="BranchId" name="BranchId" class="form-control">
+        <option value="">-- Tất cả chi nhánh --</option>
+        @foreach (var branch in Model)
+        {
+            <option value="@branch.Value" selected="@(branch.Value == selected ? "selected" : null)">
+                @branch.Text
+            </option>
+        }
+    </select>
+</div>

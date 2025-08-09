@@ -1,0 +1,150 @@
+﻿@model WebsiteOrdering.ViewModels.DonhangViewModel
+@{
+    var donhang = Model.Donhang;
+}
+@{
+    ViewData["Title"] = "Đơn hàng";
+    <link rel="stylesheet" href="~/css/hoadon.css" />
+}
+<div class="hoa-don-container-tong">
+    <div class="hoa-don-background">
+        <div class="hoa-don-tieude">
+            <div class="hoa-don-hoadon">
+                <div class="hoa-don-header">
+                    <div class="hoa-don-title">
+                        <h2>HÓA ĐƠN ĐẶT HÀNG</h2>
+                    </div>
+                    <div class="hoa-don-lines">
+                        <div class="line thick"></div>
+                        <div class="line thin"></div>
+                    </div>
+                </div>
+
+                <p>Mã đơn hàng: @donhang.Iddonhang</p>
+                <p style="margin: 0 0 0 0 ">Ngày đặt: @donhang.Ngaydat.ToString("dd/MM/yyyy HH:mm")</p>
+            </div>
+            <div class="hoa-don-anh">
+                <img src="~/css/img/hinhhoadon.png" alt="Ảnh" />
+            </div>
+        </div>
+
+        <div class="hoa-don-noidung">
+            <div class="hoa-don-infor">
+                <h2>THÔNG TIN NGƯỜI ĐẶT</h2>
+                <p>Khách hàng: @donhang.Tenkh</p>
+                <p>Số điện thoại: @donhang.Sdtkh</p>
+                @if(donhang.DeliveryMethod == "delivery")
+                {
+                    <p>Địa chỉ giao hàng: @donhang.Diachidh</p>
+                }
+                else
+                {
+                    <p>Nhận tại cửa hàng: @donhang.Diachidh</p>
+                }
+            </div>
+
+            <div class="hoa-don-address">
+                <h2>ĐỊA CHỈ NHÀ HÀNG</h2>
+                @if (donhang.IdchinhanhNavigation != null)
+                {
+                    <p>@donhang.IdchinhanhNavigation.Tencnhanh</p>
+                    <p>@donhang.IdchinhanhNavigation.Diachicn</p>
+                }
+                else
+                {
+                    <p class="text-danger">Không tìm thấy thông tin chi nhánh.</p>
+                }
+            </div>
+        </div>
+
+        <table class="table-hoa-don">
+            <thead>
+                <tr>
+                    <th>Sản phẩm</th>
+                    <th>Giá</th>
+                    <th>Số lượng</th>
+                    <th>Tổng</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in donhang.Chitietdonhangs)
+                {
+                    <tr>
+                        <td>
+                            <strong>
+                                @if (item.Kieupizza == "Ghép")
+                                {
+                                    @($"{item.IdmonanNavigation.Tenmonan} + {item.Idmonan2Navigation?.Tenmonan}")
+                                }
+                                else
+                                {
+                                    @item.IdmonanNavigation.Tenmonan
+                                }
+                            </strong>
+                            <br />
+                            @if (!string.IsNullOrEmpty(item.IdsizeNavigation?.Tensize))
+                            {
+                                <span>Size: @item.IdsizeNavigation.Tensize</span>
+
+                                <br />
+                            }
+                            @if (!string.IsNullOrEmpty(item.IddebanhNavigation?.Tendebanh))
+                            {
+                                <span>Đế: @item.IddebanhNavigation.Tendebanh</span>
+
+                                <br />
+                            }
+                            @if (item.Chitiettoppings != null && item.Chitiettoppings.Any())
+                            {
+                                <span>
+                                    Topping:
+                                    @string.Join(", ", item.Chitiettoppings.Select(t => t.IdtoppingNavigation.Tentopping))
+                                </span>
+                            }
+                        </td>
+                        <td>@item.Tongtiendh.ToString("N0") đ</td>
+                        <td>@item.Soluong</td>
+                        <td>@((item.Tongtiendh * item.Soluong).ToString("N0") + " đ")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        @* <div class="hoa-don-tongcong">
+        <p>TỔNG CỘNG: @Model.Tongtien.ToString("N0") đ</p>
+
+        @if (Model.Tienship != null)
+        {
+        <p>PHÍ GIAO HÀNG: @Model.Tienship?.ToString("N0") đ</p>
+        }
+        <p>PHƯƠNG THỨC THANH TOÁN: @Model.Ptttoan</p>
+
+        <p><strong>THÀNH TIỀN: @Model.Tongtien.ToString("N0") đ</strong></p>
+        </div> *@
+
+        <div class="hoa-don-tongcong">
+            <div class="tongcong-row">
+                <p class="ten-tieude"><strong>TỔNG CỘNG</strong></p>
+                <p class="in-ra">@Model.TongTienHang.ToString("N0") đ</p>
+            </div>
+
+            @if (Model.Donhang.Tienship != null)
+            {
+                <div class="tongcong-row">
+                    <p class="ten-tieude"><strong>PHÍ GIAO HÀNG</strong></p>
+                    <p class="in-ra">@Model.Donhang.Tienship?.ToString("N0") đ</p>
+                </div>
+            }
+
+            <div class="tongcong-row">
+                <p class="ten-tieude"><strong>PHƯƠNG THỨC THANH TOÁN</strong></p>
+                <p class="in-ra">@Model.Donhang.Ptttoan</p>
+            </div>
+
+            <div class="tongcong-row">
+                <p class="ten-tieude"><strong>THÀNH TIỀN</strong></p>
+                <p class="in-ra"><strong>@Model.ThanhTien.ToString("N0") đ</strong></p>
+            </div>
+        </div>
+    </div>
+</div>

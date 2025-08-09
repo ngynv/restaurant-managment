@@ -1,0 +1,122 @@
+﻿.category-dropdown
+{
+    position: relative;
+    display: inline-block;
+}
+
+
+.category-dropdown .dropdown-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 1050;
+    min-width: 200px;
+    padding: 0.5rem 0;
+    background-color: #fff;
+    border: 1px solid rgba(0,0,0,.15);
+    border-radius: 0.375rem;
+    box-shadow: 0 0.5rem 1rem rgba(0,0,0,.175);
+}
+
+/* Hiện menu khi hover */
+.category-dropdown:hover > .dropdown-menu {
+    display: block;
+}
+
+/* Menu con */
+.dropdown-submenu {
+    position: relative;
+}
+
+    .dropdown-submenu > .dropdown-menu {
+        display: none;
+        position: absolute;
+        top: 0;
+        left: 100%;
+        margin-top: 0;
+        margin-left: 0;
+        min-width: 180px;
+        z-index: 1060;
+        background-color: #fff;
+        border: 1px solid rgba(0,0,0,.15);
+        border-radius: 0.375rem;
+        box-shadow: 0 0.5rem 1rem rgba(0,0,0,.175);
+    }
+
+    /* Hiện submenu khi hover */
+    .dropdown-submenu:hover > .dropdown-menu {
+        display: block;
+    }
+
+/* Item style */
+.dropdown-item {
+    padding: 0.5rem 1rem;
+    color: #212529;
+    text-decoration: none;
+    cursor: pointer;
+    font-size: 0.875rem;
+    background-color: transparent;
+    border: 0;
+    display: block;
+    width: 100%;
+    white-space: nowrap;
+}
+
+    .dropdown-item:hover,
+    .dropdown-item:focus {
+        background-color: #f8f9fa;
+        color: #1e2125;
+    }
+
+    .dropdown-item.active {
+        color: #fff;
+        background-color: #0d6efd;
+    }
+
+#searchSuggestions {
+    position: absolute;
+    z-index: 1000;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+    #searchSuggestions .dropdown-item:hover {
+        background-color: #f8f9fa;
+    }
+
+.card {
+    transition: transform 0.2s;
+}
+
+    .card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+/* Ẩn mũi tên Bootstrap */
+.no-arrow::after {
+    display: none;
+}
+
+/* Responsive mobile */
+@media (max-width: 768px) {
+    .category-dropdown .dropdown-menu {
+        position: static;
+        width: 100%;
+        box-shadow: none;
+    }
+
+    .dropdown-submenu .dropdown-menu {
+        position: static;
+        width: 100%;
+        box-shadow: none;
+    }
+}
+
+/* Ngăn overflow */
+.d-flex.flex-wrap {
+    overflow: visible;
+}
+

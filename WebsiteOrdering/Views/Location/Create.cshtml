@@ -1,0 +1,49 @@
+﻿@using WebsiteOrdering.Models
+@model Chinhanh
+@{
+    ViewData["Title"] = "Thêm vị trí";
+}
+
+<h3>Chọn vị trí trên bản đồ</h3>
+
+<form asp-action="Create">
+    <div class="mb-2">
+        <label asp-for="Tencnhanh"></label>
+        <input asp-for="Tencnhanh" class="form-control" />
+    </div>
+    <div class="mb-2">
+        <label asp-for="Diachicn"></label>
+        <input asp-for="Diachicn" class="form-control" />
+    </div>
+    <div class="mb-2">
+        <label>Chọn vị trí trên bản đồ:</label>
+        <div id="map" style="height: 400px;"></div>
+    </div>
+
+    <!-- Ẩn tọa độ -->
+    <input asp-for="Latitude" type="hidden" />
+    <input asp-for="Longitude" type="hidden" />
+
+    <button type="submit" class="btn btn-primary mt-2">Lưu</button>
+</form>
+
+@section Scripts {
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        var map = L.map('map').setView([21.0285, 105.8542], 13); // Trung tâm HN
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+
+        var marker;
+
+        map.on('click', function (e) {
+            var lat = e.latlng.lat;
+            var lng = e.latlng.lng;
+
+            if (marker) marker.setLatLng([lat, lng]);
+            else marker = L.marker([lat, lng]).addTo(map);
+
+            document.querySelector('[name="Latitude"]').value = lat;
+            document.querySelector('[name="Longitude"]').value = lng;
+        });
+    </script>
+}

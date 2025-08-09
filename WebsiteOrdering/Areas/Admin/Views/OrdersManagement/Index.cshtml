@@ -1,0 +1,193 @@
+﻿@using WebsiteOrdering.Enums
+@model List<WebsiteOrdering.Models.Donhang>
+@{
+	ViewData["Title"] = "Trang quản lý";
+	Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+	var selectedStatus = ViewBag.StatusFilter as TrangThai?;
+	var statusOptions = Enum.GetValues(typeof(TrangThai)).Cast<TrangThai>().ToList();
+}
+<div class="content-title">
+	<h2>Quản lý đơn hàng</h2>
+</div>
+
+<form method="get" class="celeste-product-management mb-3">
+	<div class="form-cell cell-span-2">
+		<input type="text" name="keyword" class="celeste-input form-control" placeholder="Tìm mã đơn hàng"
+			   value="@ViewBag.Keyword" />
+	</div>
+	<div class="form-cell cell-span-2">
+		<select name="status" class="form-select" onchange="this.form.submit()">
+			<option value="">-- Trạng thái --</option>
+			@foreach (var s in statusOptions)
+			{
+				bool isSelected = selectedStatus?.ToString() == s.ToString();
+				<option value="@s" selected="@(isSelected ? "selected" : null)">@s.ToString()</option>
+			}
+		</select>
+	</div>
+	<div class="form-cell cell-span-2">
+		<select name="dateFilter" class="form-select" onchange="this.form.submit()">
+			<option value="">-- Lọc thời gian --</option>
+			<option value="week" selected="@(ViewBag.DateFilter == "week" ? "selected" : null)">Tuần này</option>
+			<option value="month" selected="@(string.IsNullOrEmpty(ViewBag.DateFilter) || ViewBag.DateFilter == "month" ? "selected" : null)">Tháng này</option>
+		</select>
+	</div>
+	<div class="form-cell cell-span-2">
+		<input type="date" name="fromDate" class="form-control" value="@ViewBag.FromDate" />
+	</div>
+	<div class="form-cell cell-span-2">
+		<input type="date" name="toDate" class="form-control" value="@ViewBag.ToDate" />
+	</div>
+	<div class="form-cell cell-span-2">
+		@await Component.InvokeAsync("BranchDropdown", new { selectedBranchId = ViewBag.BranchId as string, showLabel = false })
+	</div>
+	<div class="form-cell cell-span-3">
+		<button type="submit" class="btn btn-primary w-100">Lọc</button>
+	</div>
+	<div class="form-cell cell-span-3">
+		<a asp-action="Index" class="btn btn-secondary">Xóa lọc</a>
+	</div>
+</form>
+@if (TempData["Error"] != null)
+{
+	<div class="alert alert-danger" role="alert">@Html.Raw(TempData["Error"])</div>
+}
+@if (TempData["Success"] != null)
+{
+	<div class="alert alert-success" role="alert">@Html.Raw(TempData["Success"])</div>
+}
+@if (Model.Any())
+{
+	<div class="row align-items-center mb-3">
+		<div class="col-md-2">
+			<form method="get" id="pageSizeForm">
+				<input type="hidden" name="keyword" value="@ViewBag.Keyword" />
+				<input type="hidden" name="status" value="@ViewBag.StatusFilter" />
+				<input type="hidden" name="dateFilter" value="@ViewBag.DateFilter" />
+				<input type="hidden" name="fromDate" value="@ViewBag.FromDate" />
+				<input type="hidden" name="toDate" value="@ViewBag.ToDate" />
+				<input type="hidden" name="page" value="1" />
+				<label for="pageSize" class="form-label">Hiển thị:</label>
+				<select id="pageSize" name="pageSize" class="form-select" onchange="document.getElementById('pageSizeForm').submit()">
+					@{
+						var options = new[] { 7, 14, 21, 50 };
+						foreach (var size in options)
+						{
+							<option value="@size" selected="@(ViewBag.PageSize == size ? "selected" : null)">@size</option>
+						}
+					}
+				</select>
+			</form>
+		</div>
+		
+	</div>
+	<table class="table table-bordered">
+		<thead>
+			<tr>
+				<th>Mã đơn</th>
+				<th>Khách hàng</th>
+				<th>Ngày đặt</th>
+				<th>Tổng tiền</th>
+				<th>Trạng thái</th>
+				<th>Cập nhật</th>
+				<th></th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (var don in Model)
+			{
+				<tr>
+					<td>@don.Iddonhang</td>
+					<td>@don.Tenkh</td>
+					<td>@don.Ngaydat.ToString("dd/MM/yyyy HH:mm")</td>
+					<td>@don.Tongtien.ToString("N0") đ</td>
+					<td>@don.Trangthai.ToFriendly()</td>
+					<td>
+						@if (don.Trangthai == TrangThai.Cancelled || don.Trangthai == TrangThai.Completed)
+						{
+							<span class="text-muted">-</span>
+						}
+						else
+						{
+							var statusMap = ViewBag.StatusMap as Dictionary<string, List<string>>;
+							List<string> availableStatuses = statusMap != null && statusMap.ContainsKey(don.Iddonhang)
+							? statusMap[don.Iddonhang]
+							: new List<string>();
+							<form asp-action="UpdateStatus" asp-route-id="@don.Iddonhang" method="post" class="d-flex">
+								<select name="newStatus" class="form-select form-select-sm me-2">
+									@foreach (var option in availableStatuses)
+									{
+										<option value="@option" selected="@(option == don.Trangthai.ToFriendly() ? "selected" : null)">
+											@((Enum.Parse<TrangThai>(option)).ToFriendly())
+										</option>
+									}
+								</select>
+								<button type="submit" class="btn btn-sm btn-primary">Cập nhật</button>
+							</form>
+						}
+					</td>
+					<td>
+						<a asp-action="Details" asp-route-id="@don.Iddonhang" class="btn btn-info btn-sm">Xem</a>
+					</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+	<div class="col-md-10 text-end">
+		@{
+			int currentPage = Convert.ToInt32(ViewBag.Page ?? 1);
+			int pageSize = Convert.ToInt32(ViewBag.PageSize ?? 14);
+			int totalCount = Convert.ToInt32(ViewBag.TotalCount ?? 0);
+			int totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
+		}
+
+		<nav>
+			<ul class="pagination justify-content-center">
+				<li class="page-item @(currentPage == 1 ? "disabled" : "")">
+					<a class="page-link" href="@Url.Action("Index", new {
+                            page = currentPage - 1,
+                            pageSize = pageSize,
+                            keyword = ViewBag.Keyword,
+                            status = ViewBag.StatusFilter,
+                            dateFilter = ViewBag.DateFilter,
+                            fromDate = ViewBag.FromDate,
+                            toDate = ViewBag.ToDate
+                        })">Trước</a>
+				</li>
+
+				@for (int i = 1; i <= totalPages; i++)
+				{
+					<li class="page-item @(i == currentPage ? "active" : "")">
+						<a class="page-link" href="@Url.Action("Index", new {
+                                page = i,
+                                pageSize = pageSize,
+                                keyword = ViewBag.Keyword,
+                                status = ViewBag.StatusFilter,
+                                dateFilter = ViewBag.DateFilter,
+                                fromDate = ViewBag.FromDate,
+                                toDate = ViewBag.ToDate
+                            })">@i</a>
+					</li>
+				}
+
+				<li class="page-item @(currentPage == totalPages ? "disabled" : "")">
+					<a class="page-link" href="@Url.Action("Index", new {
+                            page = currentPage + 1,
+                            pageSize = pageSize,
+                            keyword = ViewBag.Keyword,
+                            status = ViewBag.StatusFilter,
+                            dateFilter = ViewBag.DateFilter,
+                            fromDate = ViewBag.FromDate,
+                            toDate = ViewBag.ToDate
+                        })">Sau</a>
+				</li>
+			</ul>
+		</nav>
+	</div>
+}
+else
+{
+	<div class="alert alert-info">
+		Không có đơn hàng
+	</div>
+}

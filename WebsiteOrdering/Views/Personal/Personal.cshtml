@@ -1,0 +1,91 @@
+﻿@model WebsiteOrdering.ViewModels.PersonalPageViewModel
+@{
+    ViewData["Title"] = "Trang cá nhân";
+}
+<link rel="stylesheet" href="~/css/style.css" />
+
+<h2 class="personal-title">TRANG CÁ NHÂN</h2>
+
+<div class="personal-page">
+    <div class="personal-grid">
+        <!-- Tabs -->
+        <div class="grid-item tab tab-info" data-tab="info" data-col="1" style="display:none;">
+            THÔNG TIN <span class="arrow-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" viewBox="0 0 23 23" fill="none">
+                            <path d="M1.58579 18.4247C0.804738 19.2057 0.804738 20.472 1.58579 21.2531C2.36684 22.0341 3.63316 22.0341 4.41421 21.2531L1.58579 18.4247ZM22.6777 2.1612C22.6777 1.05663 21.7822 0.161197 20.6777 0.161198L2.67767 0.161198C1.5731 0.161198 0.67767 1.05663 0.67767 2.1612C0.67767 3.26577 1.5731 4.1612 2.67767 4.1612L18.6777 4.1612L18.6777 20.1612C18.6777 21.2658 19.5731 22.1612 20.6777 22.1612C21.7822 22.1612 22.6777 21.2658 22.6777 20.1612L22.6777 2.1612ZM3 19.8389L4.41421 21.2531L22.0919 3.57541L20.6777 2.1612L19.2635 0.746984L1.58579 18.4247L3 19.8389Z" fill="#203f25" />
+                        </svg>
+                    </span>
+        </div>
+        <div class="grid-item tab tab-orders" data-tab="orders" data-col="2">
+            LỊCH SỬ <span class="arrow-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" viewBox="0 0 23 23" fill="none">
+                    <path d="M1.58579 18.4247C0.804738 19.2057 0.804738 20.472 1.58579 21.2531C2.36684 22.0341 3.63316 22.0341 4.41421 21.2531L1.58579 18.4247ZM22.6777 2.1612C22.6777 1.05663 21.7822 0.161197 20.6777 0.161198L2.67767 0.161198C1.5731 0.161198 0.67767 1.05663 0.67767 2.1612C0.67767 3.26577 1.5731 4.1612 2.67767 4.1612L18.6777 4.1612L18.6777 20.1612C18.6777 21.2658 19.5731 22.1612 20.6777 22.1612C21.7822 22.1612 22.6777 21.2658 22.6777 20.1612L22.6777 2.1612ZM3 19.8389L4.41421 21.2531L22.0919 3.57541L20.6777 2.1612L19.2635 0.746984L1.58579 18.4247L3 19.8389Z" fill="#203f25" />
+                        </svg>
+                    </span>
+        </div>
+        <div class="grid-item tab tab-booking" data-tab="booking" data-col="2">
+            ĐƠN ĐẶT BÀN <span class="arrow-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" viewBox="0 0 23 23" fill="none">
+                                <path d="M1.58579 18.4247C0.804738 19.2057 0.804738 20.472 1.58579 21.2531C2.36684 22.0341 3.63316 22.0341 4.41421 21.2531L1.58579 18.4247ZM22.6777 2.1612C22.6777 1.05663 21.7822 0.161197 20.6777 0.161198L2.67767 0.161198C1.5731 0.161198 0.67767 1.05663 0.67767 2.1612C0.67767 3.26577 1.5731 4.1612 2.67767 4.1612L18.6777 4.1612L18.6777 20.1612C18.6777 21.2658 19.5731 22.1612 20.6777 22.1612C21.7822 22.1612 22.6777 21.2658 22.6777 20.1612L22.6777 2.1612ZM3 19.8389L4.41421 21.2531L22.0919 3.57541L20.6777 2.1612L19.2635 0.746984L1.58579 18.4247L3 19.8389Z" fill="#203f25" />
+                            </svg>
+                        </span>
+        </div>
+
+        <!-- Nội dung -->
+        <div class="grid-item content info-content">
+            @await Html.PartialAsync("_PartialAccountInfo", Model.Profile)
+        </div>
+        <div class="grid-item content orders-content">
+            @await Html.PartialAsync("_PartialOrderHistory", Model.ListDonHang)
+        </div>
+        <div class="grid-item content booking-content">
+            @await Html.PartialAsync("_PartialBookingHistory", Model.ListDatBan)
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            function activateTab(tab, col) {
+                $('.content').hide().removeClass('showing');
+                $('.tab').show();
+
+                $('.tab-' + tab).hide();
+                $('.' + tab + '-content').show().css({
+                    'grid-column': col,
+                    'grid-row': '1 / span 2'
+                }).addClass('showing');
+
+                var otherCol = (col == 1) ? 2 : 1;
+                var tabs = ['info', 'orders', 'booking'];
+                var remain = tabs.filter(t => t !== tab);
+
+                $('.tab-' + remain[0]).css({
+                    'grid-column': otherCol,
+                    'grid-row': 1,
+                    'display': 'flex'
+                }).data('col', otherCol);
+
+                $('.tab-' + remain[1]).css({
+                    'grid-column': otherCol,
+                    'grid-row': 2,
+                    'display': 'flex'
+                }).data('col', otherCol);
+            }
+
+            // 👇 Lấy tab từ ViewBag (truyền từ controller về)
+            var selectedTab = "@ViewBag.SelectedTab" || "info";
+            var defaultCol = 1;
+
+            activateTab(selectedTab, defaultCol);
+
+            // Click các tab
+            $('.tab').click(function () {
+                var tab = $(this).data('tab');
+                var col = $(this).data('col');
+                activateTab(tab, col);
+            });
+        });
+    </script>
+}

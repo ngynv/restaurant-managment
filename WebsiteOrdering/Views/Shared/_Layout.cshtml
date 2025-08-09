@@ -1,0 +1,450 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] </title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/style.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/WebsiteOrdering.styles.css" asp-append-version="true" />
+    @Html.Raw("<link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.3/dist/css/splide.min.css\">")
+    <link rel="preload" href="/images/menu/menu.png" as="image">
+    <link rel="preload" href="/images/menu/menu_2.jpg" as="image">
+    <link rel="preload" href="/images/menu/menu_3.jpg" as="image">
+    <link rel="preload" href="/images/menu/menu_4.jpg" as="image">
+    <link rel="preload" href="/images/menu/menu_5.jpg" as="image">
+    @using Microsoft.AspNetCore.Identity
+    @using WebsiteOrdering.Models
+    @inject UserManager<ApplicationUser> UserManager
+    @inject SignInManager<ApplicationUser> SignInManager
+
+</head>
+@{
+    var currentPath = Context.Request.Path.ToString().ToLower();
+    var queryString = Context.Request.QueryString.ToString().ToLower();
+    var isLocationPage = currentPath.Contains("/location")
+                                        || queryString.Contains("type=delivery")
+                                        || queryString.Contains("type=pickup");
+}
+
+<body>
+    <header>
+        <div class="layout-guide">
+            <div class="header-inner">
+                <!-- 🔻 Widget menu 3 line -->
+                <div class="menu-toggle" id="menuToggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+                <a asp-controller="Home" asp-action="Index" class="restaurant-logo">
+                    <img src="/images/header/logo_restaurant.png" alt="Logo" />
+                </a>
+                @if (SignInManager.IsSignedIn(User))
+                {
+                    var currentUser = await UserManager.GetUserAsync(User);
+                    <div class="user-menu">
+                        <button class="user-toggle" aria-label="Tài khoản">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon-user" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 2a5 5 0 100 10 5 5 0 000-10zM4 20a8 8 0 0116 0v1H4v-1z" />
+                            </svg>
+                            <span class="user-text">
+                                Xin chào, <strong>@(currentUser?.FullName ?? "Người dùng")</strong>
+                            </span>
+                            <span class="arrow">&#9662;</span>
+                        </button>
+
+                        <div class="user-dropdown">
+                           @*  <a asp-controller="Account" asp-action="Profile"
+                               class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Account"
+                                                                                      && ViewContext.RouteData.Values["action"]?.ToString() == "Profile" ? "active" : "")">
+                                Thông tin tài khoản
+                            </a>
+
+                            <a asp-controller="Order" asp-action="MyOrders">Đơn hàng của tôi</a>
+
+                            <a asp-controller="Booking" asp-action="LichSuDatBan">Lịch sử đặt bàn</a> *@
+                            <a asp-controller="Personal" asp-action="Personal">Trang cá nhân</a>
+                            <form asp-controller="Account" asp-action="Logout" method="post" class="logout-form">
+                                <button type="submit">Đăng xuất</button>
+                            </form>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <a asp-controller="Account" asp-action="Login">
+                        <button class="image-button">ĐĂNG NHẬP</button>
+                    </a>
+                }
+                @* <a asp-controller="Cart" asp-action="Index">
+
+                <i class="fa fa-shopping-cart">Giỏ hàng</i>
+                <span>
+                @await Html.PartialAsync("_CartCount")
+                </span>
+                </a> *@
+            </div>
+        </div>
+    </header>
+    <!-- 🔻 Slide menu -->
+    <div class="side-menu" id="sideMenu">
+        <div class="menu-bg-wrapper">
+            <img id="menuBgCurrent" class="menu-bg-img" src="/images/menu/menu.png" alt="Background current">
+            <img id="menuBgNext" class="menu-bg-img" src="" alt="Background next">
+        </div>
+        <div class="right-menu">
+            <ul>
+                <li class="menu-item active" data-bg="/images/menu/menu.png">
+                    <a asp-area="" asp-controller="Home" asp-action="Index">Trang chủ</a>
+                </li>
+                <li class="menu-item" data-bg="/images/menu/menu_2.jpg">
+                    <a asp-area="" asp-controller="Home" asp-action="AboutUs">Giới thiệu</a>
+                </li>
+                <li class="menu-item" data-bg="/images/menu/menu_3.jpg">
+                    <a asp-area="" asp-controller="Home" asp-action="MenuBook">Thực đơn</a>
+                </li>
+                <li class="menu-item @(isLocationPage ? "active" : "")" data-bg="/images/menu/menu_4.jpg">
+                    <a asp-controller="Location" asp-action="SelectOrderType">Đặt hàng online</a>
+                </li>
+                <li class="menu-item" data-bg="/images/menu/menu_5.jpg">
+                    <a asp-area="" asp-controller="Home" asp-action="ContactUs">Liên hệ</a>
+                </li>
+            </ul>
+        </div>
+        <button class="close-menu" id="closeMenuBtn">
+            <img src="/images/menu/close_yellow.png" alt="Close" />
+        </button>
+    </div>
+
+    @RenderSection("FullWidthContent", required: false)
+
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+
+        </main>
+    </div>
+
+    <footer>
+        <div class="layout-guide">
+            <div class="footer-section">
+                <div class="footer-line">
+                    <img src="/images/footer/line.png" />
+                </div>
+                <div class="footer-inner">
+                    <div class="footer-logo">
+                        <img src="/images/footer/footer_logo.png" alt="logo" />
+                    </div>
+                    <div class="footer-links">
+                        <a asp-controller="Home" asp-action="AboutUs">Giới thiệu</a>
+                        <a asp-controller="Home" asp-action="MenuBook">Thực đơn</a>
+                        <a asp-controller="Location" asp-action="SelectOderType">Đặt hàng online</a>
+                        <a asp-controller="Booking" asp-action="Index">Đặt bàn</a>
+                        <a asp-controller="Home" asp-action="ContactUs">Liên hệ</a>
+                        <div class="footer-social-media">
+                            <a>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="54" height="54" fill="#EEDFAD" id="facebook">
+                                    <path stroke="#EEDFAD" stroke-linecap="round" stroke-linejoin="round" d="M9.892 21v-7.746H7V9.942h2.892c0-3.518 0-7.864 7.108-6.77V6.04c-3.077-.325-3.385.62-3.385 3.902H17l-.677 3.312h-2.708V21"></path>
+                                </svg>
+                            </a>
+                            <a>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="#EEDFAD" id="instagram">
+                                    <path stroke="#EEDFAD" stroke-linecap="round" stroke-linejoin="round" d="M18 6.678C18 7.5 16.873 8.113 16 7c-.5-.638-.323-2.568 2-2.529 2.323.04 2.968 1.913 3 2.845v7.553c0 4.552-3.226 5.984-4.839 6.131H8.323C4.142 21 3.033 17.763 3 16.144V8.69C3 4.256 5.968 3.05 7.452 3h7.064C12.21 4.03 7.31 6.067 7.452 11.044c.145 5.1 4.956 6.42 7.064 4.316 2.109-2.105.984-6.67-2.516-6.67"></path>
+                                </svg>
+                            </a>
+                            <a href="https://www.tiktok.com/@@threebagsne" target="_blank">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="#EEDFAD" id="tik-tok">
+                                    <path stroke="#EEDFAD" stroke-linecap="round" stroke-linejoin="round" d="M20 7.504C18.533 7.57 15.52 6.76 15.2 3h-2.8v10.967c0 3.133-2.467 4.474-4.111 3.284-2.087-1.512-.689-4.655 1.911-4.264V9.658c-2 0-6.2.784-6.2 5.68 0 6.266 6.815 6.07 8.4 5.244 2.58-1.344 3.2-2.8 3.2-6.028V9.071c.667.326 2.48 1.018 4.4 1.175"></path>
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="footer-details">
+                        <ul class="footer-contact">
+                            <h3>Liên hệ</h3>
+                            <li>(+84) 795 665 468</li>
+                            <li style="font-family:'1FTV VIP Mestika'">celesrestaurant@gmail.com</li>
+                        </ul>
+                        <ul class="footer-open-hour">
+                            <h3>giờ mở cửa</h3>
+                            <li>9:00 AM -  22:00 PM</li>
+                            <li>Từ thứ Hai đến Chủ Nhật </li>
+                        </ul>
+                    </div>
+
+                </div>
+                <div class="bottom-footer">
+                    <a class="footer-copyright">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="33" height="33" viewBox="0 0 33 33" fill="none">
+                            <path d="M16.8984 0.931152C25.4472 0.931305 32.3769 7.86181 32.3769 16.4106C32.3768 24.9594 25.4471 31.889 16.8984 31.8892C8.34959 31.8892 1.41908 24.9594 1.41893 16.4106C1.41893 7.86171 8.34949 0.931152 16.8984 0.931152Z" stroke="#EEDFAD" stroke-linecap="round" stroke-linejoin="round" />
+                            <mask id="path-2-outside-1_656_1250" maskUnits="userSpaceOnUse" x="9.65778" y="9.16846" width="14" height="15" fill="black">
+                                <rect fill="white" x="9.65778" y="9.16846" width="14" height="15" />
+                                <path d="M21.8914 20.1556C21.1053 21.2033 20.0095 21.9771 18.7592 22.3675C17.5089 22.7579 16.1674 22.745 14.9249 22.3307C13.6823 21.9163 12.6015 21.1216 11.8357 20.0589C11.0699 18.9963 10.6578 17.7197 10.6578 16.4098C10.6578 15.1 11.0699 13.8233 11.8357 12.7607C12.6015 11.6981 13.6822 10.9033 14.9248 10.489C16.1674 10.0746 17.5088 10.0617 18.7591 10.4521C20.0095 10.8424 21.1053 11.6162 21.8914 12.6639" />
+                            </mask>
+                            <path d="M22.6913 20.7557C23.0228 20.314 22.9334 19.6872 22.4916 19.3557C22.0498 19.0242 21.423 19.1137 21.0916 19.5554L22.6913 20.7557ZM21.0915 13.2641C21.423 13.7059 22.0498 13.7953 22.4916 13.4638C22.9333 13.1324 23.0227 12.5055 22.6913 12.0638L21.0915 13.2641ZM21.8914 20.1556L21.0916 19.5554C20.4314 20.4353 19.5112 21.0851 18.4612 21.413L18.7592 22.3675L19.0572 23.3221C20.5079 22.8692 21.7793 21.9713 22.6913 20.7557L21.8914 20.1556ZM18.7592 22.3675L18.4612 21.413C17.4112 21.7408 16.2847 21.7299 15.2412 21.382L14.9249 22.3307L14.6085 23.2793C16.0502 23.76 17.6066 23.775 19.0572 23.3221L18.7592 22.3675ZM14.9249 22.3307L15.2412 21.382C14.1977 21.0341 13.2901 20.3666 12.647 19.4743L11.8357 20.0589L11.0244 20.6436C11.913 21.8765 13.1669 22.7986 14.6085 23.2793L14.9249 22.3307ZM11.8357 20.0589L12.647 19.4743C12.0039 18.5819 11.6578 17.5098 11.6578 16.4098L10.6578 16.4098L9.65778 16.4098C9.65779 17.9295 10.1359 19.4107 11.0244 20.6436L11.8357 20.0589ZM10.6578 16.4098L11.6578 16.4098C11.6578 15.3099 12.0038 14.2378 12.6469 13.3454L11.8357 12.7607L11.0244 12.176C10.1359 13.4089 9.65777 14.8901 9.65778 16.4098L10.6578 16.4098ZM11.8357 12.7607L12.6469 13.3454C13.2901 12.453 14.1976 11.7856 15.2411 11.4376L14.9248 10.489L14.6085 9.5403C13.1668 10.021 11.9129 10.9431 11.0244 12.176L11.8357 12.7607ZM14.9248 10.489L15.2411 11.4376C16.2846 11.0896 17.4111 11.0788 18.4611 11.4066L18.7591 10.4521L19.0572 9.4975C17.6065 9.0446 16.0501 9.05958 14.6085 9.5403L14.9248 10.489ZM18.7591 10.4521L18.4611 11.4066C19.5111 11.7344 20.4314 12.3843 21.0915 13.2641L21.8914 12.6639L22.6913 12.0638C21.7792 10.8482 20.5078 9.9504 19.0572 9.4975L18.7591 10.4521Z" fill="#EEDFAD" mask="url(#path-2-outside-1_656_1250)" />
+                        </svg>
+                        <p>2025 | All rights reserved by Céleste Élysée Co., Ltd.</p>
+                    </a>
+                    <a class="footer-policy">chính sách bảo mật</a>
+                    <a>Điều kiện dịch vụ</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    @Html.Raw("<script src=\"https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.3/dist/js/splide.min.js\"></script>")
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const header = document.querySelector('header');
+            const menuItems = document.querySelectorAll('.menu-item');
+            const bgCurrent = document.getElementById('menuBgCurrent');
+            const bgNext = document.getElementById('menuBgNext');
+            const currentPath = window.location.pathname.toLowerCase();
+            const queryParams = new URLSearchParams(window.location.search);
+            const typeParam = queryParams.get("type");
+
+            // ✅ Hàm chuyển ảnh nền
+            function switchBackground(newSrc) {
+                if (!newSrc || bgCurrent.src.includes(newSrc)) return;
+
+                bgNext.src = newSrc;
+                bgNext.onload = () => {
+                    bgNext.style.opacity = '1';
+                    bgCurrent.style.opacity = '0';
+
+                    setTimeout(() => {
+                        bgCurrent.src = newSrc;
+                        bgCurrent.style.opacity = '1';
+                        bgNext.style.opacity = '0';
+                    }, 600);
+                };
+            }
+
+            // ✅ Đặt active ban đầu (theo path hoặc query string)
+            menuItems.forEach(item => {
+                const link = item.querySelector('a');
+                if (!link) return;
+
+                const linkPath = new URL(link.href, window.location.origin).pathname.toLowerCase();
+                const text = link.textContent.trim().toLowerCase();
+                const isLocationPage = currentPath.includes("/location")
+                    || (typeParam === "delivery" || typeParam === "pickup");
+
+                if (
+                    // Trường hợp đặc biệt: Đặt hàng online
+                    (isLocationPage && text.includes("đặt hàng online")) ||
+                    // Trường hợp khớp link thông thường
+                    linkPath === currentPath
+                ) {
+                    document.querySelector('.menu-item.active')?.classList.remove('active');
+                    item.classList.add('active');
+
+                    const bg = item.getAttribute('data-bg');
+                    if (bg) {
+                        bgCurrent.src = bg;
+                        bgCurrent.style.opacity = '1';
+                    }
+                }
+            });
+
+            // ✅ Hover menu item → đổi ảnh nền
+            menuItems.forEach(item => {
+                item.addEventListener('mouseenter', () => {
+                    const bg = item.getAttribute('data-bg');
+                    switchBackground(bg);
+                });
+
+                item.addEventListener('mouseleave', () => {
+                    const activeItem = document.querySelector('.menu-item.active');
+                    const bg = activeItem?.getAttribute('data-bg');
+                    switchBackground(bg);
+                });
+
+                // ✅ Click menu → active + ảnh + chuyển trang sau hiệu ứng
+                const link = item.querySelector('a');
+                link?.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const targetUrl = link.href;
+                    const bg = item.getAttribute('data-bg');
+
+                    document.querySelector('.menu-item.active')?.classList.remove('active');
+                    item.classList.add('active');
+
+                    if (bg) {
+                        switchBackground(bg);
+                    }
+
+                    setTimeout(() => {
+                        window.location.href = targetUrl;
+                    }, 200);
+                });
+            });
+
+            // ✅ Scroll header: thêm class khi cuộn
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 10) {
+                    header.classList.add('scrolled');
+                } else {
+                    header.classList.remove('scrolled');
+                }
+            });
+        });
+    </script>
+
+    <script>
+        const menuToggle = document.getElementById('menuToggle'); // Nút mở menu
+        const sideMenu = document.getElementById('sideMenu');     // Khối menu
+        const menuItems = document.querySelectorAll('.menu-item');
+        const bgCurrent = document.getElementById('menuBgCurrent');
+        const bgNext = document.getElementById('menuBgNext');
+        const closeMenuBtn = document.getElementById('closeMenuBtn');
+        const closeIcon = closeMenuBtn.querySelector('img');
+
+        function isMobileOrTablet() {
+            return window.innerWidth <= 991;
+        }
+
+        function lockScroll() {
+            document.documentElement.style.overflow = 'hidden';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function unlockScroll() {
+            document.documentElement.style.overflow = '';
+            document.body.style.overflow = '';
+        }
+
+        // Mở menu
+        menuToggle?.addEventListener('click', () => {
+            sideMenu.classList.toggle('active');
+
+            if (sideMenu.classList.contains('active') && isMobileOrTablet()) {
+                lockScroll();
+            } else {
+                unlockScroll();
+            }
+
+            // Cập nhật ảnh nền theo menu-item.active
+            const activeItem = document.querySelector('.menu-item.active');
+            if (activeItem) {
+                const bg = activeItem.getAttribute('data-bg');
+                bgCurrent.src = bg;
+                bgCurrent.style.opacity = '1';
+                bgNext.style.opacity = '0';
+            }
+        });
+
+        // Đóng menu
+        closeMenuBtn?.addEventListener('click', () => {
+            sideMenu.classList.remove('active');
+            menuToggle.classList.remove('active');
+            unlockScroll();
+        });
+
+        // Hover nút close → đổi ảnh (chỉ desktop)
+        closeMenuBtn?.addEventListener('mouseenter', () => {
+            if (!isMobileOrTablet()) {
+                closeIcon.src = "/images/menu/close_white.png";
+            }
+        });
+
+        closeMenuBtn?.addEventListener('mouseleave', () => {
+            if (!isMobileOrTablet()) {
+                closeIcon.src = "/images/menu/close_yellow.png";
+            }
+        });
+
+        // Hover menu item → chuyển ảnh nền
+        menuItems.forEach(item => {
+            item.addEventListener('mouseenter', () => {
+                const bg = item.getAttribute('data-bg');
+                if (!bg || bg === bgCurrent.src) return;
+
+                bgNext.src = bg;
+                bgNext.onload = () => {
+                    bgNext.style.opacity = '1';
+                    bgCurrent.style.opacity = '0';
+                    setTimeout(() => {
+                        bgCurrent.src = bg;
+                        bgCurrent.style.opacity = '1';
+                        bgNext.style.opacity = '0';
+                    }, 600);
+                };
+            });
+
+            item.addEventListener('mouseleave', () => {
+                const activeItem = document.querySelector('.menu-item.active');
+                const bg = activeItem?.getAttribute('data-bg');
+                if (!bg || bg === bgCurrent.src) return;
+
+                bgNext.src = bg;
+                bgNext.onload = () => {
+                    bgNext.style.opacity = '1';
+                    bgCurrent.style.opacity = '0';
+                    setTimeout(() => {
+                        bgCurrent.src = bg;
+                        bgCurrent.style.opacity = '1';
+                        bgNext.style.opacity = '0';
+                    }, 600);
+                };
+            });
+
+            // ✅ Click menu item → active + đổi ảnh + chuyển trang
+            item.querySelector('a')?.addEventListener('click', (e) => {
+                e.preventDefault(); // Chặn chuyển trang ngay
+
+                const targetUrl = e.currentTarget.href; // ✅ DÙNG .href thay vì getAttribute
+
+                // Cập nhật active menu
+                document.querySelector('.menu-item.active')?.classList.remove('active');
+                item.classList.add('active');
+
+                // Đổi ảnh nền
+                const bg = item.getAttribute('data-bg');
+                if (bg && bg !== bgCurrent.src) {
+                    bgNext.src = bg;
+                    bgNext.onload = () => {
+                        bgNext.style.opacity = '1';
+                        bgCurrent.style.opacity = '0';
+                        setTimeout(() => {
+                            bgCurrent.src = bg;
+                            bgCurrent.style.opacity = '1';
+                            bgNext.style.opacity = '0';
+                        }, 600);
+                    };
+                }
+
+                // ✅ Chuyển trang sau hiệu ứng
+                setTimeout(() => {
+                    window.location.href = targetUrl;
+                }, 200);
+            });
+
+        });
+
+        // ✅ Resize → cập nhật scroll lock lại
+        window.addEventListener('resize', () => {
+            if (sideMenu.classList.contains('active')) {
+                if (isMobileOrTablet()) {
+                    lockScroll();
+                } else {
+                    unlockScroll();
+                }
+            }
+
+        });
+    </script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+    @* <button id="toggleGridBtn">🟪 Toggle Grid</button> *@
+
+</body>
+</html>

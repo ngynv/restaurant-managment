@@ -1,0 +1,219 @@
+﻿@model WebsiteOrdering.ViewModels.LoginViewModel
+
+@{
+	<link rel="stylesheet" href="~/css/login.css" />
+	Layout = null;
+	ViewBag.HidenHeaderFotter = true;
+	<link href="https://fonts.googleapis.com/css2?family=Baloo+2&display=swap" rel="stylesheet">
+
+	// var action = ViewContext.RouteData.Values["action"]?.ToString()?.ToLower();
+	// var isCustomer = false;
+	// var isStaff = true;
+
+}
+@if (TempData["Message"] != null)
+{
+	<div id="toast-success" class="toast-message show">
+		@TempData["Message"]
+	</div>
+}
+
+<div class="total_login">
+	<div class="anh_login">
+		<img src="~/css/img/abc.jpg" alt="Background Image" />
+
+		<div class="login-text">
+			<p>Khám phá và trải nghiệm dịch vụ nhanh chóng mà không cần đăng nhập</p>
+			<button type="button" onclick="window.location.href='@Url.Action("Index", "Home")'" class="btn-tieptuc-trangchu">
+				Tiếp tục
+			</button>
+		</div>
+	</div>
+
+	<div class="chung">
+		<div class="nav-tabs">
+			<a id="tabCustomer" class="nav-tab tab-left " asp-controller="Account" asp-action="Login" onclick="switchTab('customer')">KHÁCH HÀNG</a>
+
+			<div class="tab-wave flipped">
+				<svg viewBox="0 0 100 100" preserveAspectRatio="none">
+					@*                         <path id="tabWavePath" d="M0,0 Q10,5 20,30 C45,80 75,100 100,100 L100,0 Z" fill="#203F25" />
+ *@                        <path id="tabWavePath" d="M0,0 Q20,10 40,50 C60,90 80,100 100,100 L100,0 Z" fill="#203F25" />
+				</svg>
+			</div>
+			<a style="background:#203F25;color:white" id="tabStaff" class="nav-tab tab-right" asp-area="Admin" asp-controller="Admin" asp-action="LoginStaff" onclick="switchTab('staff')"> NHÂN VIÊN</a>
+		</div>
+		<div class="form_login">
+			<h2 style="color: #203F25;">ĐĂNG NHẬP</h2>
+			<form asp-action="Login" method="post">
+				@Html.AntiForgeryToken()
+				@if (!string.IsNullOrEmpty(ViewBag.ReturnUrl))
+				{
+					<input type="hidden" name="returnUrl" value="@ViewBag.ReturnUrl" />
+				}
+				<div id="dn_email">
+					<span>
+						<img style="width:30px;height:23px" src="~/css/img/icon_email.png" alt="Email icon" />
+					</span>
+					<input asp-for="Email" type="email" placeholder="Nhập email" />
+					<span asp-validation-for="Email" class="text-danger"></span>
+				</div>
+
+				<div id="dn_mk">
+					<span>
+						<img style="width:25px; height:27px" src="~/css/img/icon_pass.png" alt="Password icon" />
+					</span>
+					<input asp-for="Password" type="password" placeholder="Nhập mật khẩu" />
+					<span asp-validation-for="Password" class="text-danger"></span>
+				</div>
+
+				<div class="remmember_login">
+					<label class="checkbox_login">
+						<input asp-for="RememberMe" type="checkbox" />
+						Ghi nhớ tài khoản
+					</label>
+					<a href="#" class="forgot_pass">Quên mật khẩu?</a>
+				</div>
+
+				<button type="submit" class="btn_login">ĐĂNG NHẬP</button>
+			</form>
+			<div class="div_gg">
+				<div class="signup_login">
+					Bạn chưa có tài khoản?
+					<a asp-action="Register" class="register_link">Đăng ký ngay</a>
+				</div>
+
+				<div class="line">
+					<span>Hoặc</span>
+				</div>
+
+				<button type="button" class="google-btn" onclick="location.href='@Url.Action("LoginWithGoogle", "Account", new { returnUrl = ViewBag.ReturnUrl })'">
+					<div class="google-icon"></div>
+					Đăng nhập bằng Google
+				</button>
+			</div>
+			<div id="forgot-password-modal" class="modal-overlay-fotgot">
+				<div class="modal-content-forgot">
+					<div class="tieude-forgot">
+						<h2>Quên mật khẩu</h2>
+						<span class="btn-dong">&times;</span>
+					</div>
+
+					<form asp-action="ForgotPassword" asp-controller="Account" method="post">
+						<div class="form-forgot">
+							<label for="Email">Nhập email đã đăng ký</label>
+							<input type="email" name="Email" class="input-forgot" required />
+							<span class="text-danger">@TempData["Message"]</span>
+						</div>
+						<button type="submit" class="btn-xacnhan-forgot">XÁC NHẬN</button>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<partial name="_ValidationScriptsPartial" />
+<script>
+	function switchTab(target) {
+		const customerTab = document.getElementById("tabCustomer");
+		const staffTab = document.getElementById("tabStaff");
+		// const customerContent = document.getElementById("contentCustomer");
+		// const staffContent = document.getElementById("contentStaff");
+		// const wave = document.getElementById("tabWave");
+
+		if (target === "customer") {
+			customerTab.classList.add("active");
+			staffTab.classList.remove("active");
+			customerContent.classList.add("active");
+			staffContent.classList.remove("active");
+
+			wave.style.transform = "scaleX(1)";
+		} else {
+			customerTab.classList.remove("active");
+			staffTab.classList.add("active");
+			customerContent.classList.remove("active");
+			staffContent.classList.add("active");
+
+			wave.style.transform = "scaleX(-1)";
+		}
+	}
+
+
+	//     const forgotLink = document.querySelector('.forgot_pass');
+	//     const modal = document.getElementById('forgot-password-modal');
+	//     const closeBtn = document.querySelector('.btn-dong');
+
+	//     forgotLink.addEventListener('click', function (e) {
+	//         e.preventDefault();
+	//     modal.style.display = 'block';
+	//     });
+
+	//     closeBtn.addEventListener('click', function () {
+	//         modal.style.display = 'none';
+	//     });
+
+	//     window.addEventListener('click', function (e) {
+	//         if (e.target === modal) {
+	//         modal.style.display = 'none';
+	//         }
+	//     });
+
+	// document.querySelector('.btn-dong').addEventListener('click', function () {
+	//     document.getElementById('forgot-password-modal').style.display = 'none';
+	// });
+	// window.addEventListener('DOMContentLoaded', () => {
+	//     document.getElementById('forgot-password-modal').style.display = 'none';
+	// });
+
+	const forgotLink = document.querySelector(".forgot_pass");
+	const modal = document.getElementById("forgot-password-modal");
+	const btnClose = document.querySelector(".btn-dong");
+
+	forgotLink.addEventListener("click", (e) => {
+		e.preventDefault();
+		modal.classList.add("active");
+	});
+
+	btnClose.addEventListener("click", () => {
+		modal.classList.remove("active");
+	});
+
+	// window.addEventListener("click", (e) => {
+	//     if (e.target === modal) {
+	//         modal.classList.remove("active");
+	//     }
+	// });
+
+
+</script>
+<style>
+	.toast-message {
+		position: fixed;
+		top: 20px;
+		right: 20px;
+		background-color: #d4edda;
+		color: #155724;
+		border: 1px solid #c3e6cb;
+		padding: 12px 20px;
+		border-radius: 8px;
+		box-shadow: 0 0 10px rgba(0,0,0,0.1);
+		z-index: 9999;
+		opacity: 0;
+		transition: opacity 0.5s ease-in-out;
+		pointer-events: none;
+	}
+
+		.toast-message.show {
+			opacity: 1;
+		}
+</style>
+
+<script>
+	setTimeout(() => {
+		const toast = document.getElementById('toast-success');
+		if (toast) {
+			toast.classList.remove('show');
+		}
+	}, 3000); // 3 giây
+</script>

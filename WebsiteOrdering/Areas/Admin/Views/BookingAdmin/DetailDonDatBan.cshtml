@@ -1,0 +1,61 @@
+﻿@using WebsiteOrdering.Enums
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model WebsiteOrdering.Models.Datban
+@{
+    ViewData["Title"] = "Chi tiết đơn đặt bàn";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+    var ct = Model?.Chitietdatbans?.FirstOrDefault();
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <h2 class="mb-4">Chi tiết đơn đặt bàn</h2>
+
+            @if (Model != null)
+            {
+                <div class="card">
+                    <div class="card-body">
+                        <table class="table table-bordered table-striped">
+                            <tr><th width="200">Mã đơn</th><td>@Model.Iddatban</td></tr>
+                            <tr><th>Tên người đặt</th><td>@Model.Tenngdat</td></tr>
+                            <tr><th>Email</th><td>@Model.Nguoidung?.Email</td></tr>
+                            <tr><th>Số điện thoại</th><td>@Model.Sđtngdat</td></tr>
+                            <tr><th>Ghi chú</th><td>@(string.IsNullOrEmpty(Model.Ghichu) ? "Không có" : Model.Ghichu)</td></tr>
+                            <tr><th>Số lượng người</th><td>@Model.Songuoidat</td></tr>
+                            <tr><th>Ngày đặt</th><td>@Model.Ngaydat.ToString("dd/MM/yyyy")</td></tr>
+                            <tr><th>Giờ bắt đầu</th><td>@Model.Giobatdau</td></tr>
+                            <tr><th>Giờ kết thúc</th><td>@Model.Gioketthuc</td></tr>
+                            <tr>
+                                <th>Trạng thái</th>
+                                <td>
+                                    <span class="badge @(Model.Trangthaidatban == TrangThai.Confirmed ? "badge-success" : "badge-warning")">
+                                        @Model.Trangthaidatban.ToFriendly()
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr><th>Chi nhánh</th><td>@Model.IdchinhanhNavigation?.Tencnhanh</td></tr>
+                            <tr><th>Khu vực</th><td>@(ct?.IdbanNavigation?.Khuvuc ?? "Chưa có thông tin")</td></tr>
+                            <tr><th>Tên bàn</th><td>@(ct?.IdbanNavigation?.Tenban ?? "Chưa có thông tin")</td></tr>
+                        </table>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-danger">
+                    <h4>Không tìm thấy thông tin đơn đặt bàn!</h4>
+                    <p>Vui lòng kiểm tra lại mã đơn đặt bàn.</p>
+                </div>
+            }
+
+            <div class="mt-3">
+                <a asp-action="Index" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Quay lại
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

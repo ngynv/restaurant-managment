@@ -1,0 +1,104 @@
+﻿@model List<MonAnThongKeViewModel>
+@{
+    ViewData["Title"] = "Thống kê món ăn";
+    <link href="~/css/monanstat.css" rel="stylesheet" />
+}
+<div class="container">
+    <div class="header">
+        <h1>Báo cáo thống kê món ăn</h1>
+        <p>Phân tích hiệu suất bán hàng và xu hướng khách hàng</p>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <h3>Tổng số món ăn</h3>
+            <p class="stat-number" id="totalDishes">@ViewBag.TotalDishes</p>
+        </div>
+        <div class="stat-card">
+            <h3>Tổng lượt bán</h3>
+            <p class="stat-number" id="totalSales">@ViewBag.TotalSales</p>
+        </div>
+        <div class="stat-card">
+            <h3>Tổng lượt ghép</h3>
+            <p class="stat-number" id="totalCombos">@ViewBag.TotalCombos</p>
+        </div>  
+    </div>
+
+
+    <div class="chart-container">
+        <div class="chart-wrapper">
+            <h3 class="chart-title">Top 10 món ăn bán chạy</h3>
+            <canvas id="salesChart" width="400" height="200"></canvas>
+        </div>
+
+        <div class="chart-wrapper">
+            <h3 class="chart-title">Tần suất được ghép món</h3>
+            <canvas id="comboChart" width="400" height="200"></canvas>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const salesLabels = @Html.Raw(ViewBag.SalesLabels);
+    const salesData = @Html.Raw(ViewBag.SalesData);
+    const comboLabels = @Html.Raw(ViewBag.ComboLabels);
+    const comboData = @Html.Raw(ViewBag.ComboData);
+    const barColors = [
+        '#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4',
+        '#feca57', '#ff9ff3', '#54a0ff', '#5f27cd',
+        '#1abc9c', '#d35400'
+    ];
+
+    // Biểu đồ thanh - Top 10 món bán chạy
+    new Chart(document.getElementById('salesChart').getContext('2d'), {
+        type: 'bar',
+        data: {
+            labels: salesLabels,
+            datasets: [{
+                label: 'Số lượng bán',
+                data: salesData,
+                backgroundColor: barColors,
+                borderRadius: 8,
+                borderSkipped: false
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        padding: 20,
+                        usePointStyle: true
+                    }
+                }
+            }
+        }
+    });
+
+    // Biểu đồ tròn - Ghép món
+    new Chart(document.getElementById('comboChart').getContext('2d'), {
+        type: 'bar',
+        data: {
+            labels: comboLabels,
+            datasets: [{
+                label: 'Số lần ghép',
+                data: comboData,
+                backgroundColor: barColors,
+                borderWidth: 0
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        padding: 20,
+                        usePointStyle: true
+                    }
+                }
+            }
+        }
+    });
+</script>

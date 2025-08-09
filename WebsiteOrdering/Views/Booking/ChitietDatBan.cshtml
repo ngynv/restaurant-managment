@@ -1,0 +1,68 @@
+﻿@model WebsiteOrdering.Models.Datban
+<link rel="stylesheet" href="~/css/ctdb.css" />
+<div class="ctdb-container-tong">	
+	<div class="ctdb-background">
+		<div class="ctdb-tieude">
+			<div class="ctdb-datban">
+				<div class="ctdb-title">
+					<h2>CHI TIẾT ĐƠN ĐẶT BÀN</h2>
+				</div>
+				<p>Mã đơn hàng: @Model.Iddatban</p>
+				<p style="margin: 0 0 0 0 ">Ngày đặt: @Model.Ngaydat.ToString("dd/MM/yyyy")</p>
+			</div>
+
+			<div class="ctdb-anh">
+				<img src="~/css/img/hinhhoadon.png" alt="Ảnh" />
+			</div>
+		</div>
+
+		<div class="ctdb-noidung">
+			<div class="ctdb-infor">
+				<h2>THÔNG TIN NGƯỜI ĐẶT</h2>
+				<p>Khách hàng: @Model.Tenngdat</p>
+				<p>Email: @Model.Nguoidung?.Email</p>
+				<p>Số điện thoại: @Model.Sđtngdat</p>
+			</div>
+
+			<div class="ctdb-address">
+				<h2>THÔNG TIN ĐẶT BÀN</h2>
+
+				@if (Model.IdchinhanhNavigation != null)
+				{
+					<p>@Model.IdchinhanhNavigation?.Tencnhanh</p>
+				}
+				else
+				{
+					<p class="text-danger">Không tìm thấy thông tin chi nhánh.</p>
+				}
+				<p>@Model.Songuoidat Khách </p>
+				<p>@Model.Trangthaidatban.ToFriendly()</p>
+			</div>
+		</div>
+
+
+		<table class="ctdb-table">
+			<thead>
+				<tr>
+					<th>Tên bàn</th>
+					<th>Khu vực</th>
+					<th>Giờ vào</th>
+					<th>Giờ ra</th>
+					<th>Ghi chú</th>
+				</tr>
+			</thead>
+			<tbody>
+				@foreach (var ct in Model.Chitietdatbans)
+				{
+					<tr>
+						<td>@ct.IdbanNavigation?.Tenban</td>
+						<td>@ct.IdbanNavigation?.Khuvuc</td>
+						<td>@ct.Giovao.ToString(@"hh\:mm")</td>
+						<td>@ct.Giora.ToString(@"hh\:mm")</td>
+						<td>@Model.Ghichu</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+	</div>
+</div>

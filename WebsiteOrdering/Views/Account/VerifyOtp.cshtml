@@ -1,0 +1,25 @@
+﻿@model WebsiteOrdering.ViewModels.VerifyOtpViewModel
+
+@{
+    ViewData["Title"] = "Xác minh OTP";
+}
+
+<h2>Nhập mã OTP</h2>
+
+<form asp-action="VerifyOtp" method="post">
+    <input type="hidden" asp-for="PhoneNumber" />
+
+    <div class="form-group">
+        <label for="OtpInput">Mã OTP</label>
+        <input asp-for="OtpInput" class="form-control" placeholder="Nhập mã OTP đã nhận" />
+        <span asp-validation-for="OtpInput" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-success mt-2">Xác nhận</button>
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

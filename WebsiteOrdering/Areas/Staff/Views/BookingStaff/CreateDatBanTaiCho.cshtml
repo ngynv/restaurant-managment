@@ -1,0 +1,210 @@
+﻿@using WebsiteOrdering.Enums
+@model WebsiteOrdering.Models.Datban
+@{
+    ViewData["Title"] = "Tạo đơn đặt bàn tại chỗ";
+    var chiNhanhTen = ViewBag.ChiNhanhTen as string ?? "Không rõ";
+    var idChiNhanh = ViewBag.Idchinhanh as string ?? "";
+    var listBan = ViewBag.Ban as List<WebsiteOrdering.Models.Ban>;
+    Layout = "~/Areas/Staff/Views/Shared/_LayoutStaff.cshtml";
+}
+<div class="content-title-for-here">
+    <h2>Tạo đơn đặt bàn tại chỗ</h2>
+</div>
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+
+<form asp-action="CreateDatBanTaiCho" method="post" class="space-y-4">
+    <div>
+        <label>Ngày đặt</label>
+        <input name="Ngaydat" id="ngayDatInput" class="form-control" type="date"
+               value="@DateTime.Now.ToString("yyyy-MM-dd")"
+               min="@DateTime.Now.ToString("yyyy-MM-dd")"
+               required />
+        <small class="text-muted">Không thể chọn ngày quá khứ</small>
+    </div>
+
+    <div>
+        <label>Giờ bắt đầu</label>
+        <select id="Giobatdau" name="Giobatdau" class="form-select" required>
+            <option value="">-- Chọn giờ --</option>
+        </select>
+    </div>
+    <div>
+        <label>Chi nhánh</label>
+        <input type="text" class="form-control" value="@chiNhanhTen" disabled />
+        <input type="hidden" name="Idchinhanh" value="@idChiNhanh" />
+        <input type="hidden" id="idChiNhanh" value="@idChiNhanh" />
+    </div>
+
+    <div>
+        <label>Khu vực</label>
+        <select id="khuvucSelect" class="form-select" required>
+            <option value="">-- Chọn khu vực --</option>
+            @if (listBan != null)
+            {
+                @foreach (var khuvuc in listBan.Select(b => b.Khuvuc?.Trim()).Where(k => !string.IsNullOrEmpty(k)).Distinct())
+                {
+                    <option value="@khuvuc">@khuvuc</option>
+                }
+
+
+            }
+
+        </select>
+
+    </div>
+
+    <div>
+        <label>Bàn</label>
+        <select name="selectedIdban" id="banSelect" class="form-select" required>
+            <option value="">-- Chọn bàn --</option>
+        </select>
+
+    </div>
+
+    <div>
+        <label>Tên người đặt (nếu có)</label>
+        <input name="Tenngdat" class="form-control" placeholder="Khách vãng lai nếu bỏ trống" />
+    </div>
+
+    <div>
+        <label>Số điện thoại</label>
+        <input name="Sđtngdat" class="form-control" />
+    </div>
+
+    <div>
+        <label>Số người</label>
+        <input name="Songuoidat" class="form-control" type="number" min="1" />
+    </div>
+    <div>
+        <label>Trạng thái</label>
+        <select asp-for="Trangthaidatban" class="form-select" asp-items="Html.GetEnumSelectList<TrangThai>()">
+            <option value="">-- Chọn trạng thái --</option>
+        </select>
+    </div>
+
+    <div>
+        <label>Ghi chú</label>
+        <textarea asp-for="Ghichu" class="form-control" rows="3"></textarea>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Tạo đơn đặt bàn</button>
+</form>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const gioSelect = document.getElementById('Giobatdau');
+            const ngayDatInput = document.getElementById('ngayDatInput');
+            const khuvucSelect = document.getElementById('khuvucSelect');
+            const banSelect = document.getElementById('banSelect');
+            const idChiNhanhInput = document.getElementById('idChiNhanh');
+
+            // Hàm generate options giờ
+            function generateTimeOptions(currentTotalMins = null) {
+                const start = 9 * 60; // 9:00
+                const end = 21 * 60; // 21:00
+                const step = 30;
+
+                gioSelect.innerHTML = "";
+                const defaultOpt = new Option("-- Chọn giờ --", "");
+                gioSelect.appendChild(defaultOpt);
+
+                for (let mins = start; mins <= end; mins += step) {
+                    if (currentTotalMins !== null && mins <= currentTotalMins) continue;
+
+                    const hour = Math.floor(mins / 60);
+                    const minute = mins % 60;
+                    const timeStr = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
+
+                    gioSelect.appendChild(new Option(timeStr, timeStr));
+                }
+            }
+
+            // Setup giờ mặc định khi load
+            const todayStr = new Date().toISOString().split('T')[0];
+            if (ngayDatInput.value === todayStr) {
+                const now = new Date();
+                const currentMins = now.getHours() * 60 + now.getMinutes();
+                generateTimeOptions(currentMins);
+            } else {
+                generateTimeOptions();
+            }
+
+            // Thay đổi ngày
+            ngayDatInput.addEventListener("change", function () {
+                const selectedDate = new Date(this.value);
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+
+                if (selectedDate.toDateString() === today.toDateString()) {
+                    const now = new Date();
+                    const currentMins = now.getHours() * 60 + now.getMinutes();
+                    generateTimeOptions(currentMins);
+                } else {
+                    generateTimeOptions();
+                }
+                // Reset bàn khi thay đổi ngày
+                banSelect.innerHTML = '<option value="">-- Chọn bàn --</option>';
+            });
+
+            // Khi thay đổi khu vực hoặc giờ
+            khuvucSelect.addEventListener('change', loadBan);
+            gioSelect.addEventListener('change', loadBan);
+
+            function loadBan() {
+                const khuvuc = khuvucSelect.value;
+                const idChinhanh = idChiNhanhInput.value;
+                const ngay = ngayDatInput.value;
+                const gio = gioSelect.value;
+
+                banSelect.innerHTML = '<option value="">-- Chọn bàn --</option>';
+
+                if (!khuvuc || !idChinhanh || !ngay || !gio) {
+                    return;
+                }
+
+                const baseUrl = '@Url.Action("GetBanDaDat", "BookingStaff", new { area = "Staff" })';
+                const url = `${baseUrl}?ngay=${encodeURIComponent(ngay)}&gio=${encodeURIComponent(gio)}&idChinhanh=${encodeURIComponent(idChinhanh)}&idKhuvuc=${encodeURIComponent(khuvuc)}`;
+
+                fetch(url)
+                    .then(response => {
+                        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                        return response.json();
+                    })
+                    .then(data => {
+                        banSelect.innerHTML = '<option value="">-- Chọn bàn --</option>';
+
+                        if (data && Array.isArray(data) && data.length > 0) {
+                            data.forEach(ban => {
+                                const optionText = `${ban.tenban} - ${ban.trangthai} - Sức chứa: ${ban.songuoi}`;
+                                const option = new Option(optionText, ban.idban);
+                                if (ban.trangthai === "Đã đặt") {
+                                    option.disabled = true;
+                                }
+                                banSelect.appendChild(option);
+                            });
+                        } else {
+                            const option = new Option('Không có bàn nào', '');
+                            option.disabled = true;
+                            banSelect.appendChild(option);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('❌ Lỗi khi load bàn:', error);
+                        alert('Lỗi khi tải danh sách bàn: ' + error.message);
+                    });
+
+            }
+
+            // Không cho chọn ngày quá khứ
+            ngayDatInput.setAttribute('min', todayStr);
+        });
+    </script>
+}

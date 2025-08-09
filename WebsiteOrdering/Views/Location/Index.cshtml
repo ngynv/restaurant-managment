@@ -1,0 +1,142 @@
+﻿@using WebsiteOrdering.Models
+@model List<Chinhanh>
+@{
+    ViewData["Title"] = "Vị trí";
+}
+
+<link href="~/css/map2.css" rel="stylesheet" />
+
+<div class="location-container">
+
+    <div class="map-wrapper">
+        <!-- Left Sidebar -->
+        <div class="sidebar">
+            <!-- Delivery Options -->
+            <div class="delivery-options active">
+                <div class="delivery-option active" data-type="pickup">
+                    <span class="icon">🏪</span>
+                    <span>Đến lấy</span>
+                </div>
+                <div class="delivery-option" data-type="delivery">
+                    <span class="icon">🚚</span>
+                    <span>Giao hàng</span>
+                </div>
+            </div>
+
+            <!-- Store List -->
+            <div class="store-list-sidebar">
+                <div class="search-container">
+                    <div id="pickupSearchBlock">
+                        <div class="search-wrapper">
+                            <input class="searchInput" type="text" id="storeSearchInput" placeholder="Nhập địa chỉ của bạn..." autocomplete="off">
+                            @* <span class="search-icon">🔍</span> *@
+                            <div class="loading-spinner" id="storeLoadingSpinner"></div>
+                            <div class="suggestions" id="storeSuggestions">
+                                <!-- Store suggestions sẽ được hiển thị ở đây -->
+                            </div>
+                        </div>
+                    </div>
+                    <div id="deliverySearchBlock" class="hidden">
+                        <div class="search-wrapper-delivery">
+                            <input class="searchInput" type="text" id="searchInput" placeholder="Nhập địa chỉ của bạn..." autocomplete="off">
+                            @* <span class="search-icon">🔍</span> *@
+                            <div class="loading-spinner" id="loadingSpinner"></div>
+                            <div class="suggestions" id="suggestions">
+                                <!-- Suggestions sẽ được hiển thị ở đây -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Store List Container - Chỉ hiển thị khi pickup -->
+                <div id="storeList" class="store-list-container">
+                </div>
+
+                <!-- Pickup Actions - Chỉ hiển thị khi pickup -->
+                @* <div id="pickupActions" class="map-actions">
+                    <button id="btnSelectStore" class="control-btn highlight-btn">
+                        ✓ Chọn cửa hàng này
+                    </button>
+                </div> *@
+                <div class="map-actions-left always-visible-cart">
+                    <button id="btnCart" class="cart-map-btn">
+                        Giỏ hàng
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Map Mode (Default) -->
+        <div id="map-mode" class="map-mode active">
+            <div class="sidebar-search-container">
+            </div>
+            <div class="map-controls">
+                <button id="resetView" class="control-btn">
+                    <span class="icon">🏠</span>
+                    <span id="resetText">Về vị trí ban đầu</span>
+                </button>
+                <button id="toggleSatellite" class="control-btn">
+                    <span class="icon">🛰️</span>
+                    <span>Chế độ vệ tinh</span>
+                </button>
+                <button id="findLocation" class="control-btn">
+                    <span class="icon">📍</span>
+                    <span>Chọn vị trí của tôi</span>
+                </button>
+                <div class="location-counter">
+                    <span id="locationCount">@Model.Count</span> địa điểm
+                </div>
+            </div>
+
+            <div id="map" class="interactive-map">
+                <!-- Map sẽ được render ở đây -->
+                <div style="height: 100%; background: #f0f8ff; display: flex; align-items: center; justify-content: center; color: #666;">
+                    Bản đồ sẽ được tải ở đây
+                </div>
+            </div>
+
+            <div class="map-legend">
+                <div class="legend-item">
+                    <span class="legend-marker">🏪</span>
+                    <span>Cửa hàng</span>
+                </div>
+                <div class="legend-item">
+                    <span class="legend-marker">📍</span>
+                    <span>Vị trí của bạn</span>
+                </div>
+                <div class="legend-item">
+                    <span class="legend-marker">🔵</span>
+                    <span>Đường đi</span>
+                </div>
+            </div>
+            <div class="map-actions map-actions-row">
+                <button id="btnSaveSessionLocation" class="control-btn highlight-btn">
+                    Lưu vị trí đã chọn
+                </button>
+
+                <!-- Chỉ hiện khi pickup -->
+                <button id="btnSelectStore" class="control-btn highlight-btn hidden">
+                    Chọn cửa hàng này
+                </button>
+
+                <!-- Chỉ hiện khi delivery -->
+                <button id="btnClearRoute" class="control-btn danger-btn hidden">
+                    Xóa đường đi
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        const locations = @Html.Raw(Json.Serialize(Model));
+        const OPENROUTE_API_KEY = '@ViewBag.OpenRouteApiKey';
+        window.initialDeliveryType = '@ViewBag.OrderType';
+    </script>
+
+    @* <script src="~/js/map-handler.js"></script> *@
+    <script src="~/js/locationservice.js"></script>
+    <script src="~/js/searchservice.js"></script>
+    <script src="~/js/maphandler.js"></script>
+}

@@ -1,0 +1,453 @@
+﻿@using WebsiteOrdering.Enums
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model List<WebsiteOrdering.Models.Datban>
+@{
+    ViewData["Title"] = "Quản lý đặt bàn";
+    Layout = "~/Areas/Staff/Views/Shared/_LayoutStaff.cshtml";
+    var now = TimeOnly.FromDateTime(DateTime.Now);
+    var today = DateOnly.FromDateTime(DateTime.Now);
+}
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        // Auto submit form function
+        let timeout;
+        window.autoSubmit = function () {
+            clearTimeout(timeout);
+            timeout = setTimeout(() => {
+                document.getElementById('filterForm')?.submit();
+            }, 300);
+        }
+
+        // Handle radio button changes for "Khác" option
+        document.addEventListener('change', function (e) {
+            if (e.target.type === 'radio' && e.target.name.startsWith('lyDo-')) {
+                const nameParts = e.target.name.split('-');
+                if (nameParts.length > 1) {
+                    const id = nameParts[1];
+                    const inputKhac = document.getElementById('lyDoKhacInput-' + id);
+
+                    if (inputKhac) {
+                        if (e.target.value === "Khác") {
+                            inputKhac.style.display = "block";
+                            const textarea = inputKhac.querySelector('textarea');
+                            if (textarea) {
+                                setTimeout(() => textarea.focus(), 100);
+                            }
+                        } else {
+                            inputKhac.style.display = "none";
+                            const textarea = inputKhac.querySelector('textarea');
+                            if (textarea) {
+                                textarea.value = '';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    });
+
+    // SIMPLE FUNCTIONS - NO BOOTSTRAP MODAL
+    function openCancelForm(id) {
+        const form = document.getElementById('cancelForm-' + id);
+        if (form) {
+            // Reset form
+            const radios = form.querySelectorAll('input[type=radio]');
+            radios.forEach(radio => radio.checked = false);
+
+            const khacInput = form.querySelector('[id^="lyDoKhacInput-"]');
+            if (khacInput) {
+                khacInput.style.display = 'none';
+                const textarea = khacInput.querySelector('textarea');
+                if (textarea) textarea.value = '';
+            }
+
+            // Show form
+            form.style.display = 'block';
+        }
+    }
+
+    function closeCancelForm(id) {
+        const form = document.getElementById('cancelForm-' + id);
+        if (form) {
+            form.style.display = 'none';
+        }
+    }
+</script>
+<div class="content-title">
+    <h2>Danh sách đơn đặt bàn</h2>
+</div>
+<div class="mb-3">
+    @{
+        string idChiNhanh = ViewBag.SelectedChiNhanh as string ?? "";
+        string buildUrl(string status) => Url.Action("Index", new { idChiNhanh = idChiNhanh, trangThai = status });
+        var selectedTrangThai = ViewBag.SelectedTrangThai as TrangThai?;
+
+    }
+    <a href="@Url.Action("Index", "BookingStaff", new { area = "Staff" })"
+       class="btn @(selectedTrangThai == null ? "btn-all-items" : "btn-outline-dark")">
+        Tất cả đơn hàng
+    </a>
+
+    <a href="@buildUrl("Pending")"
+       class="btn @(selectedTrangThai == TrangThai.Pending ? "btn-warning" : "btn-outline-warning")">
+        Chờ xác nhận (@ViewBag.CountChoXacNhan)
+    </a>
+
+    <a href="@buildUrl("Confirmed")"
+       class="btn @(selectedTrangThai == TrangThai.Confirmed ? "btn-primary" : "btn-outline-primary")">
+        Đã xác nhận (@ViewBag.CountDaXacNhan)
+    </a>
+
+    <a href="@buildUrl("Cancelled")"
+       class="btn @(selectedTrangThai == TrangThai.Cancelled ? "btn-danger" : "btn-outline-danger")">
+        Đã hủy (@ViewBag.CountDaHuy)
+    </a>
+
+    <a href="@buildUrl("Completed")"
+       class="btn @(selectedTrangThai == TrangThai.Completed ? "btn-success" : "btn-outline-success")">
+        Hoàn thành (@ViewBag.CountHoanThanh)
+    </a>
+</div>
+
+@* <form method="get" id="filterForm" class="form-inline mb-3">
+    <input type="hidden" name="trangThai" value="@ViewBag.SelectedTrangThai" />
+
+    <label class="mr-2">Từ ngày:</label>
+    <input type="date"
+           name="tuNgay"
+           class="form-control mr-2"
+           value="@ViewBag.TuNgay"
+           onchange="autoSubmit()" />
+
+    <label class="mr-2">Chi nhánh:</label>
+    <select name="idChiNhanh" class="form-control mr-2" onchange="autoSubmit()">
+        <option value="">Tất cả chi nhánh</option>
+        @foreach (var cn in ViewBag.ChiNhanhList)
+        {
+            <option value="@cn.Idchinhanh" selected="@(ViewBag.SelectedChiNhanh == cn.Idchinhanh ? "selected" : null)">
+                @cn.Tencnhanh
+            </option>
+        }
+    </select>
+</form>
+ *@
+<table class="table table-bordered table-order table-hover">
+    <thead class="thead-dark">
+        <tr>
+            <th>Mã</th>
+            <th>Khách hàng</th>
+            <th>Ngày đặt</th>
+            <th>Giờ đặt</th>
+            <th>Giờ kết thúc</th>
+            <th>Số người</th>
+            <th>Chi nhánh</th>
+            <th>Khu vực</th>
+            <th>Tên bàn</th>
+            <th>Trạng thái</th>
+            <th style="width:100px;">Thao tác</th>
+            <th>Lý do</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var d in Model)
+        {
+            var ct = d.Chitietdatbans.FirstOrDefault();
+            <tr>
+                <td>@d.Iddatban</td>
+                <td>@d.Tenngdat</td>
+                <td>@d.Ngaydat.ToString("dd/MM/yyyy")</td>
+                <td style="text-align:center">@d.Giobatdau</td>
+                <td style="text-align:center">@d.Gioketthuc</td>
+                <td style="text-align:center">@d.Songuoidat</td>
+                <td>@d.IdchinhanhNavigation.Tencnhanh</td>
+                <td>@ct?.IdbanNavigation?.Khuvuc</td>
+                <td>@ct?.IdbanNavigation?.Tenban</td>
+                <td>
+                    <span class="badge @(d.Trangthaidatban == TrangThai.Pending ? "bg-warning" :
+                                         d.Trangthaidatban == TrangThai.Confirmed ? "bg-primary" :
+                                         d.Trangthaidatban == TrangThai.Cancelled ? "bg-danger" :
+                                          d.Trangthaidatban == TrangThai.Completed ? "bg-success" : "bg-secondary")">
+                        @d.Trangthaidatban.ToFriendly()
+                    </span>
+                </td>
+                <td style ="display:flex; flex-direction:column; gap:5px">
+                    @if (d.Trangthaidatban == TrangThai.Pending)
+                    {
+                        <form method="post" asp-action="XacNhanDatBan" asp-route-id="@d.Iddatban" style="display:inline;"
+                              onsubmit="return confirm('Bạn có chắc chắn muốn xác nhận đặt bàn này?')">
+                            <button class="btn btn-success btn-sm" type="submit">Xác nhận</button>
+                        </form>
+                        <button type="button" class="btn btn-danger btn-sm" onclick="openCancelForm('@d.Iddatban')">
+                            Hủy
+                        </button>
+                    }
+                    else if (d.Trangthaidatban == TrangThai.Confirmed)
+                    {
+
+                        var isToday = d.Ngaydat == today;
+                        var canCheckIn = false;
+
+                        if (isToday)
+                        {
+                            var gioBatDau = d.Giobatdau;
+                            var gioChoPhep = gioBatDau.AddMinutes(-30); // Giờ bắt đầu - 10 phút
+                            canCheckIn = now >= gioChoPhep;
+                        }
+
+                        if (canCheckIn)
+                        {
+                            <form asp-action="KhachDaDen" method="post" asp-area="Staff" asp-controller="BookingStaff">
+                                <input type="hidden" name="id" value="@d.Iddatban" />
+                                <button type="submit" class="btn btn-success">Khách đã đến</button>
+                            </form>
+                        }
+                        else
+                        {
+                            <button type="button" class="btn btn-secondary" disabled>
+                                Chưa thể check-in (chỉ cho phép sớm 30 phút)
+                            </button>
+                        }
+
+                        <button type="button" class="btn btn-danger btn-sm" onclick="openCancelForm('@d.Iddatban')">
+                            Hủy
+                        </button>
+                        <button type="button" class="btn btn-warning btn-sm" onclick="openEditForm('@d.Iddatban')">
+                            Cập nhật
+                        </button>
+                    }
+                    <form asp-action="DetailDonDatBan" asp-area="Staff" asp-controller="BookingStaff">
+                        <input type="hidden" name="id" value="@d.Iddatban" />
+                        <button type="submit" class="btn btn-primary" style="font-size:14px;">
+                            <i class="bi bi-search"></i> Chi tiết
+                        </button>
+                    </form>
+
+
+                </td>
+                <td>
+                    @(d.Trangthaidatban == TrangThai.Cancelled ? d.Lydo : "")
+                </td>
+
+            </tr>
+        }
+    </tbody>
+</table>
+
+
+@*Form Hiển thị lý do hủy cho nhan viên chọn hủy*@
+@* Simple cancel form - NO MODAL *@
+@foreach (var d in Model)
+{
+    <div id="cancelForm-@d.Iddatban" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999;">
+        <div style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); background:white; padding:20px; border-radius:8px; width:500px; max-width:90%;">
+            <div style="border-bottom:1px solid #ddd; padding-bottom:10px; margin-bottom:15px;">
+                <h5 style="margin:0;">Hủy đặt bàn - Mã: @d.Iddatban</h5>
+                <button type="button" style="float:right; margin-top:-30px; border:none; background:none; font-size:20px; cursor:pointer;" onclick="closeCancelForm('@d.Iddatban')">&times;</button>
+            </div>
+
+            <form asp-action="HuyDatBan" method="post" onsubmit="return validateCancellationForm(@d.Iddatban)">
+                <input type="hidden" name="id" value="@d.Iddatban" />
+
+                <p><strong>Khách hàng:</strong> @d.Tenngdat</p>
+                <p><strong>Ngày đặt:</strong> @d.Ngaydat.ToString("dd/MM/yyyy")</p>
+                <p><strong>Giờ:</strong> @d.Giobatdau - @d.Gioketthuc</p>
+                <hr>
+                <h6 for="lyDo">Chọn lý do hủy:</h6>
+
+                <div style="margin-bottom:10px;">
+                    <label>
+                        <input type="radio" name="lyDo" value="Khách không đến" required style="margin-right:8px;">
+                        Khách không đến
+                    </label>
+                </div>
+
+                <div style="margin-bottom:10px;">
+                    <label>
+                        <input type="radio" name="lyDo" value="Sự cố đột xuất của nhà hàng" style="margin-right:8px;">
+                        Sự cố đột xuất của nhà hàng
+                    </label>
+                </div>
+
+                <div style="margin-bottom:10px;">
+                    <label>
+                        <input type="radio" name="lyDo" value="Khách yêu cầu hủy" style="margin-right:8px;">
+                        Khách yêu cầu hủy
+                    </label>
+                </div>
+
+                <div style="margin-bottom:10px;">
+                    <label>
+                        <input type="radio" name="lyDo" value="Khác" style="margin-right:8px;">
+                        Khác
+                    </label>
+                </div>
+
+                <div id="lyDoKhacInput-@d.Iddatban" style="display:none; margin-top:10px;">
+                    <label>Lý do chi tiết:</label>
+                    <textarea name="lyDoChiTiet" class="form-control" rows="3" placeholder="Vui lòng nhập lý do chi tiết..."></textarea>
+                </div>
+
+                <div style="margin-top:20px; text-align:right;">
+                    <button type="button" class="btn btn-secondary" onclick="closeCancelForm('@d.Iddatban')">Đóng</button>
+                    <button type="submit" class="btn btn-danger">Xác nhận hủy</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <div id="editForm-@d.Iddatban" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999;">
+        <div style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); background:white; padding:20px; border-radius:8px; width:600px; max-width:95%;">
+            <div style="border-bottom:1px solid #ddd; padding-bottom:10px; margin-bottom:15px;">
+                <h5 style="margin:0;">Cập nhật đặt bàn - Mã: @d.Iddatban</h5>
+                <button type="button" style="float:right; margin-top:-30px; border:none; background:none; font-size:20px; cursor:pointer;" onclick="closeEditForm('@d.Iddatban')">&times;</button>
+            </div>
+            <form asp-action="EditDatBan" method="post">
+                <input type="hidden" name="Iddatban" value="@d.Iddatban" />
+                <div class="form-group">
+                    <label>Chi nhánh</label>
+                    <input type="text" value="@d.IdchinhanhNavigation.Tencnhanh" class="form-control" readonly />
+                </div>
+                <div class="form-group">
+                    <label>Bàn</label>
+                    @if (ViewBag.BanList != null && ViewBag.BanList.Count > 0)
+                    {
+                        var currentBanId = d.Chitietdatbans.FirstOrDefault()?.Idban ?? "";
+
+                        <select name="Idban" class="form-control" required>
+                            @foreach (var b in ViewBag.BanList)
+                            {
+                                <option value="@b.Idban" selected="@(b.Idban == currentBanId ? "selected" : null)">
+                                    @b.Tenban - @b.Khuvuc (@b.Songuoi người)
+                                </option>
+                            }
+                        </select>
+                    }
+                    else
+                    {
+                        <div class="alert alert-warning">
+                            Không có bàn nào trong chi nhánh này hoặc dữ liệu chưa được load.
+                        </div>
+                        <input type="hidden" name="Idban" value="@d.Chitietdatbans.FirstOrDefault()?.Idban" />
+                    }
+
+
+                </div>
+                <div class="form-group">
+                    <label>Giờ bắt đầu</label>
+                    <select name="Giobatdau" id="giobatdau-@d.Iddatban" class="form-control"
+                            data-default="@d.Giobatdau.ToString("HH\\:mm")" required></select>
+
+                </div>
+                <div style="margin-top:20px; text-align:right;">
+                    <button type="button" class="btn btn-secondary" onclick="closeEditForm('@d.Iddatban')">Đóng</button>
+                    <button type="submit" class="btn btn-primary">Lưu cập nhật</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+}
+
+<script>
+    // Validation function for cancellation form
+    function validateCancellationForm(id) {
+        const selectedReason = document.querySelector(`input[name="lyDo-${id}"]:checked`);
+
+        if (!selectedReason) {
+            alert('Vui lòng chọn lý do hủy!');
+            return false;
+        }
+
+        if (e.target.type === 'radio' && e.target.value === "Khác" && e.target.name === 'lyDo') {
+            const detailText = document.getElementById(`lyDoKhacInput-${id}`).querySelector('textarea').value.trim();
+            if (!detailText) {
+                alert('Vui lòng nhập lý do chi tiết khi chọn "Khác"!');
+                return false;
+            }
+        }
+
+        const confirmed = confirm('Bạn có chắc chắn muốn hủy đặt bàn này?');
+        if (confirmed) {
+            // Close form after confirmation
+            closeCancelForm(id);
+        }
+        return confirmed;
+    }
+
+    function openEditForm(id) {
+        const form = document.getElementById('editForm-' + id);
+        if (form) {
+            form.style.display = 'block';
+
+            const startSelect = document.getElementById(`giobatdau-${id}`);
+            const defaultStart = startSelect.getAttribute("data-default") || "";
+
+            // Gọi setup
+            setupTimeSelect(id, defaultStart);
+        }
+    }
+
+
+
+    function closeEditForm(id) {
+        const form = document.getElementById('editForm-' + id);
+        if (form) {
+            form.style.display = 'none';
+        }
+    }
+
+
+    function timeToMinutes(timeStr) {
+        const [h, m] = timeStr.split(":").map(Number);
+        return h * 60 + m;
+    }
+
+    function minutesToTimeStr(totalMinutes) {
+        const h = Math.floor(totalMinutes / 60);
+        const m = totalMinutes % 60;
+        return `${h.toString().padStart(2, "0")}:${m.toString().padStart(2, "0")}`;
+    }
+
+    function generateTimeOptions(selectElement, startMinutes, endMinutes, stepMinutes, disableBeforeMinutes = null) {
+        selectElement.innerHTML = ""; // clear
+        for (let mins = startMinutes; mins <= endMinutes; mins += stepMinutes) {
+            if (disableBeforeMinutes !== null && mins <= disableBeforeMinutes) continue;
+
+            const timeStr = minutesToTimeStr(mins);
+            const option = document.createElement("option");
+            option.value = timeStr;
+            option.textContent = timeStr;
+            selectElement.appendChild(option);
+        }
+    }
+
+    function setupTimeSelect(datbanId, defaultStart) {
+        const startSelect = document.getElementById(`giobatdau-${datbanId}`);
+
+        const startMinutes = 9 * 60; // 9:00
+        const endMinutes = 21 * 60; // 21:00
+        const step = 30;
+
+        // Tạo options
+        generateTimeOptions(startSelect, startMinutes, endMinutes, step);
+
+        // Set giá trị mặc định nếu có
+        if (defaultStart) {
+            startSelect.value = defaultStart;
+        }
+    }
+
+    function addHoursToTime(timeStr, hoursToAdd) {
+        const [h, m] = timeStr.split(":").map(Number);
+        let totalMinutes = h * 60 + m + hoursToAdd * 60;
+        totalMinutes = totalMinutes % (24 * 60);
+        return minutesToTimeStr(totalMinutes);
+    }
+
+</script>
